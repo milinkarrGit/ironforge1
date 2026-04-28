@@ -17,6 +17,8 @@ public class CorsConfig {
 
         // 🔥 IMPORTANT : mettre ton frontend exact
         config.addAllowedOrigin("http://localhost:63342");
+        config.addAllowedOrigin("http://127.0.0.1:63342");
+        config.addAllowedOrigin("https://lighthearted-marzipan-b2d545.netlify.app");
 
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
