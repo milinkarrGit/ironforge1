@@ -109,7 +109,8 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:63342",
-                "http://127.0.0.1:63342"
+                "http://127.0.0.1:63342",
+                "https://lighthearted-marzipan-b2d545.netlify.app"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
