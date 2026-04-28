@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRONFORGE - Forge Your Body</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <span class="logo-icon">🔥</span>
+            <span class="logo-text">IRON<span class="orange">FORGE</span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="#programmes">Programmes</a></li>
+            <li><a href="#coachs">Coachs</a></li>
+            <li><a href="#boutique">Boutique</a></li>
+            <li><a href="#abonnements">Abonnements</a></li>
+            <li><a href="#localisation">Contact</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="login.html" class="btn-login">Se connecter</a>
+            <a href="register.html" class="btn-register">S'inscrire</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="accueil">
+    <div class="hero-overlay"></div>
+    <div class="hero-particles" id="particles"></div>
+    <div class="hero-content">
+        <div class="hero-badge">💪 #1 Salle de Sport</div>
+        <h1 class="hero-title">
+            FORGE YOUR <span class="gradient-text">BODY</span><br>
+            FORGE YOUR <span class="gradient-text">MIND</span>
+        </h1>
+        <p class="hero-subtitle">
+            Transformez votre corps et votre mental avec nos programmes
+            d'entraînement personnalisés et nos coachs experts.
+        </p>
+        <div class="hero-buttons">
+            <a href="register.html" class="btn-primary">
+                <i class="fas fa-fire"></i> Commencer maintenant
+            </a>
+            <a href="#programmes" class="btn-secondary">
+                <i class="fas fa-play"></i> Voir les programmes
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number" data-target="500">0</span>
+                <span class="stat-plus">+</span>
+                <span class="stat-label">Membres</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-number" data-target="50">0</span>
+                <span class="stat-plus">+</span>
+                <span class="stat-label">Programmes</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-number" data-target="4">0</span>
+                <span class="stat-plus"></span>
+                <span class="stat-label">Coachs Experts</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-number" data-target="5">0</span>
+                <span class="stat-plus">★</span>
+                <span class="stat-label">Satisfaction</span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-scroll">
+        <span>Scroll</span>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="services" id="services">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Ce qu'on offre</span>
+            <h2>NOS <span class="orange">SERVICES</span></h2>
+            <p>Tout ce dont vous avez besoin pour atteindre vos objectifs</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🏋️</div>
+                <h3>Programmes Personnalisés</h3>
+                <p>Des programmes adaptés à votre niveau et vos objectifs fitness</p>
+                <div class="service-arrow">→</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">👨‍🏫</div>
+                <h3>Coachs Experts</h3>
+                <p>4 coachs certifiés disponibles pour vous accompagner</p>
+                <div class="service-arrow">→</div>
+            </div>
+            <div class="service-card featured">
+                <div class="service-icon">💊</div>
+                <h3>Boutique Nutrition</h3>
+                <p>Suppléments, vêtements et équipements de qualité</p>
+                <div class="service-arrow">→</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Suivi Progression</h3>
+                <p>Suivez vos progrès avec notre système de points et niveaux</p>
+                <div class="service-arrow">→</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROGRAMMES ===== -->
+<section class="programmes" id="programmes">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Entraînement</span>
+            <h2>NOS <span class="orange">PROGRAMMES</span></h2>
+            <p>Choisissez le programme qui correspond à votre niveau</p>
+        </div>
+        <div class="programmes-grid">
+            <div class="programme-card">
+                <div class="programme-image">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.hs6y9nbs4cIKf8uOqSWK9QHaJH?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Force Maximale">
+                    <div class="programme-level avance">AVANCÉ</div>
+                </div>
+                <div class="programme-info">
+                    <h3>Force Maximale</h3>
+                    <p>Programme intensif de développement de la force pure</p>
+                    <div class="programme-details">
+                        <span><i class="fas fa-clock"></i> 8 semaines</span>
+                        <span><i class="fas fa-calendar"></i> 4 jours/sem</span>
+                    </div>
+                    <a href="programmes.html" class="btn-programme">Voir le programme →</a>
+                </div>
+            </div>
+            <div class="programme-card featured">
+                <div class="programme-badge">⭐ Populaire</div>
+                <div class="programme-image">
+                    <img src="https://static.nike.com/a/images/f_auto/dpr_1.0,cs_srgb/w_1212,c_limit/e67496bd-4e60-4965-8562-8c7e4123077e/10-easy-at-home-cardio-workouts-no-equipment-required.jpg" alt="Cardio">
+                    <div class="programme-level intermediaire">INTERMÉDIAIRE</div>
+                </div>
+                <div class="programme-info">
+                    <h3>Cardio Brûle-Graisses</h3>
+                    <p>Programme cardio intense pour perdre du poids rapidement</p>
+                    <div class="programme-details">
+                        <span><i class="fas fa-clock"></i> 6 semaines</span>
+                        <span><i class="fas fa-calendar"></i> 3 jours/sem</span>
+                    </div>
+                    <a href="programmes.html" class="btn-programme">Voir le programme →</a>
+                </div>
+            </div>
+            <div class="programme-card">
+                <div class="programme-image">
+                    <img src="https://tse1.mm.bing.net/th/id/OIP.3dGl03HBZKB0CZkTgis2IAHaEO?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Débutant">
+                    <div class="programme-level debutant">DÉBUTANT</div>
+                </div>
+                <div class="programme-info">
+                    <h3>Débutant Total</h3>
+                    <p>Parfait pour commencer votre transformation physique</p>
+                    <div class="programme-details">
+                        <span><i class="fas fa-clock"></i> 4 semaines</span>
+                        <span><i class="fas fa-calendar"></i> 3 jours/sem</span>
+                    </div>
+                    <a href="programmes.html" class="btn-programme">Voir le programme →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== COACHS ===== -->
+<section class="coachs" id="coachs">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Notre équipe</span>
+            <h2>NOS COACHS <span class="orange">EXPERTS</span></h2>
+            <p>Des professionnels certifiés à votre service</p>
+        </div>
+        <div class="coachs-grid">
+            <div class="coach-card">
+                <div class="coach-image">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.O74_eV-RCZ2hqmxyc0sJtAHaEo?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Coach 1">
+                    <div class="coach-overlay">
+                        <a href="register.html" class="btn-reserver">Réserver</a>
+                    </div>
+                </div>
+                <div class="coach-info">
+                    <h3>Lucas Dupont</h3>
+                    <span class="coach-specialite">Musculation & Force</span>
+                    <div class="coach-stars">★★★★★</div>
+                    <div class="coach-stats">
+                        <span>5 ans exp.</span>
+                        <span>120 clients</span>
+                    </div>
+                </div>
+            </div>
+            <div class="coach-card">
+                <div class="coach-image">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.-OB8flncmA3g3wzDQU-76AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Coach 2">
+                    <div class="coach-overlay">
+                        <a href="register.html" class="btn-reserver">Réserver</a>
+                    </div>
+                </div>
+                <div class="coach-info">
+                    <h3>Sophie Martin</h3>
+                    <span class="coach-specialite">Cardio & Perte de poids</span>
+                    <div class="coach-stars">★★★★★</div>
+                    <div class="coach-stats">
+                        <span>7 ans exp.</span>
+                        <span>200 clients</span>
+                    </div>
+                </div>
+            </div>
+            <div class="coach-card">
+                <div class="coach-image">
+                    <img src="https://th.bing.com/th/id/R.dfadd53577c930bc32d4c9c34fffec20?rik=YF3G4Dg8cr7BgQ&riu=http%3a%2f%2f2.bp.blogspot.com%2f--qYfzTr3SJI%2fT2YDnqfLrnI%2fAAAAAAAAAcM%2fr0BbMTRcNEU%2fs1600%2fLee-Priest-Famous-Bodybuilder.jpg&ehk=6yaIfEbW%2fa%2bInI83gSvVMIIbkxVLCfPsHGE2cE7i5GA%3d&risl=&pid=ImgRaw&r=0" alt="Coach 3">
+                    <div class="coach-overlay">
+                        <a href="register.html" class="btn-reserver">Réserver</a>
+                    </div>
+                </div>
+                <div class="coach-info">
+                    <h3>Marc Bernard</h3>
+                    <span class="coach-specialite">CrossFit & Endurance</span>
+                    <div class="coach-stars">★★★★☆</div>
+                    <div class="coach-stats">
+                        <span>4 ans exp.</span>
+                        <span>90 clients</span>
+                    </div>
+                </div>
+            </div>
+            <div class="coach-card">
+                <div class="coach-image">
+                    <img src="https://distribuidorafitness.pe/wp-content/uploads/2024/03/Blogs-Fitt-1400x789.jpg" alt="Coach 4">
+                    <div class="coach-overlay">
+                        <a href="register.html" class="btn-reserver">Réserver</a>
+                    </div>
+                </div>
+                <div class="coach-info">
+                    <h3>Camille Leroy</h3>
+                    <span class="coach-specialite">Yoga & Mobilité</span>
+                    <div class="coach-stars">★★★★★</div>
+                    <div class="coach-stats">
+                        <span>6 ans exp.</span>
+                        <span>150 clients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== BOUTIQUE APERÇU ===== -->
+<section class="boutique-apercu" id="boutique">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Nutrition & Équipement</span>
+            <h2>NOTRE <span class="orange">BOUTIQUE</span></h2>
+            <p>Les meilleurs produits pour optimiser vos performances</p>
+        </div>
+        <div class="produits-grid">
+            <div class="produit-card">
+                <div class="produit-image">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.P4tUob9o5YKUhQV5lefQ3wHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Whey Protein">
+                    <div class="produit-badge">Bestseller</div>
+                </div>
+                <div class="produit-info">
+                    <h4>Whey Protein 1kg</h4>
+                    <div class="produit-prix">45.99US</div>
+                    <button class="btn-panier">
+                        <i class="fas fa-shopping-cart"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+            <div class="produit-card">
+                <div class="produit-image">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.cZPaX0gdeZ4K-34lkXieGgHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="BCAA">
+                </div>
+                <div class="produit-info">
+                    <h4>BCAA 300g</h4>
+                    <div class="produit-prix">29.99US</div>
+                    <button class="btn-panier">
+                        <i class="fas fa-shopping-cart"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+            <div class="produit-card">
+                <div class="produit-image">
+                    <img src="https://tse1.mm.bing.net/th/id/OIP.KfJDiWh3Do2KtPTmwAdElgHaI1?rs=1&pid=ImgDetMain&o=7&rm=3" alt="T-shirt">
+                    <div class="produit-badge nouveau">Nouveau</div>
+                </div>
+                <div class="produit-info">
+                    <h4>T-shirt Sport</h4>
+                    <div class="produit-prix">24.99US</div>
+                    <button class="btn-panier">
+                        <i class="fas fa-shopping-cart"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+            <div class="produit-card">
+                <div class="produit-image">
+                    <img src="data:image/webp;base64,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" alt="Gants">
+                </div>
+                <div class="produit-info">
+                    <h4>Gants Musculation</h4>
+                    <div class="produit-prix">19.99US</div>
+                    <button class="btn-panier">
+                        <i class="fas fa-shopping-cart"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="boutique-btn">
+            <a href="boutique.html" class="btn-primary">
+                Voir tous les produits <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ABONNEMENTS ===== -->
+<section class="abonnements" id="abonnements">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Tarifs</span>
+            <h2>NOS <span class="orange">ABONNEMENTS</span></h2>
+            <p>Choisissez le plan qui vous convient</p>
+        </div>
+        <div class="plans-grid">
+            <div class="plan-card">
+                <div class="plan-name">BASIC</div>
+                <div class="plan-prix">
+                    <span class="prix">29.99</span>
+                    <span class="devise">US/mois</span>
+                </div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> Accès salle illimité</li>
+                    <li><i class="fas fa-check"></i> 1 programme inclus</li>
+                    <li><i class="fas fa-check"></i> Application mobile</li>
+                    <li><i class="fas fa-times"></i> Sessions coach</li>
+                    <li><i class="fas fa-times"></i> Nutrition plan</li>
+                </ul>
+                <a href="register.html" class="btn-plan">Choisir Basic</a>
+            </div>
+            <div class="plan-card featured">
+                <div class="plan-badge">⭐ Recommandé</div>
+                <div class="plan-name">PRO</div>
+                <div class="plan-prix">
+                    <span class="prix">49.99</span>
+                    <span class="devise">US/mois</span>
+                </div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> Accès salle illimité</li>
+                    <li><i class="fas fa-check"></i> Programmes illimités</li>
+                    <li><i class="fas fa-check"></i> Application mobile</li>
+                    <li><i class="fas fa-check"></i> 4 sessions coach/mois</li>
+                    <li><i class="fas fa-times"></i> Nutrition plan</li>
+                </ul>
+                <a href="register.html" class="btn-plan featured">Choisir Pro</a>
+            </div>
+            <div class="plan-card">
+                <div class="plan-name">ELITE</div>
+                <div class="plan-prix">
+                    <span class="prix">89.99</span>
+                    <span class="devise">US/mois</span>
+                </div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> Accès salle illimité</li>
+                    <li><i class="fas fa-check"></i> Programmes illimités</li>
+                    <li><i class="fas fa-check"></i> Application mobile</li>
+                    <li><i class="fas fa-check"></i> Sessions coach illimitées</li>
+                    <li><i class="fas fa-check"></i> Plan nutrition personnalisé</li>
+                </ul>
+                <a href="register.html" class="btn-plan">Choisir Elite</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LOCALISATION ===== -->
+<section class="localisation" id="localisation">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Nous trouver</span>
+            <h2>NOTRE <span class="orange">LOCALISATION</span></h2>
+        </div>
+        <div class="localisation-content">
+            <div class="localisation-info">
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Adresse</h4>
+                        <p> Delmas 75 Siloe , Rue des Jeunes </p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h4>Horaires</h4>
+                        <p>Lun-Ven : 6h00 - 20h00</p>
+                        <p>Sam-Dim : 8h00 - 20h00</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4>Téléphone</h4>
+                        <p>+509 41 05 62 46</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <p>Janvieredouard04@ironforge.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="localisation-map">
+                <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15263.123456789!2d-72.3388!3d18.5944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb9e9a3b3b3b3b3%3A0x1234567890abcdef!2sPort-au-Prince%2C%20Ha%C3%AFti!5e0!3m2!1sfr!2sht!4v1234567890"
+                        width="100%"
+                        height="400"
+                        style="border:0; border-radius:16px;"
+                        allowfullscreen=""
+                        loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="nav-logo">
+                    <span class="logo-icon">🔥</span>
+                    <span class="logo-text">IRON<span class="orange">FORGE</span></span>
+                </div>
+                <p>Transformez votre corps et votre mental avec IRONFORGE.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#programmes">Programmes</a></li>
+                    <li><a href="#coachs">Coachs</a></li>
+                    <li><a href="#boutique">Boutique</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">Abonnements</a></li>
+                    <li><a href="#">Séances privées</a></li>
+                    <li><a href="#">Nutrition</a></li>
+                    <li><a href="#">Blog fitness</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="#">support@ironforge.com</a></li>
+                    <li><a href="#">+509 41 05 62 46</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 IRONFORGE. Viens Forge votre Force 🔥</p>
+        </div>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

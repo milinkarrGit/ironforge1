@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRONFORGE - Mon Profil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --orange: #FF6B00;
+            --gradient: linear-gradient(135deg, #FF6B00, #FF0000);
+            --noir: #0A0A0A;
+            --noir-card: #1A1A1A;
+            --noir-light: #252525;
+            --blanc: #FFFFFF;
+            --gris: #888888;
+            --vert: #00C853;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--noir);
+            color: var(--blanc);
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--noir-card);
+            height: 100vh; position: fixed;
+            left: 0; top: 0;
+            display: flex; flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+        .sidebar-logo {
+            padding: 25px;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+        }
+        .logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px; letter-spacing: 2px; color: var(--blanc);
+        }
+        .logo-text em { color: var(--orange); font-style: normal; }
+        .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .nav-section { padding: 0 15px; margin-bottom: 25px; }
+        .nav-section-title {
+            font-size: 11px; font-weight: 600; color: var(--gris);
+            letter-spacing: 2px; text-transform: uppercase;
+            padding: 0 10px; margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 10px; border-radius: 10px;
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-size: 14px; font-weight: 500;
+            transition: all 0.3s; margin-bottom: 4px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--blanc); }
+        .nav-item.active {
+            background: rgba(255,107,0,0.15);
+            color: var(--orange);
+            border-left: 3px solid var(--orange);
+        }
+        .nav-item i { width: 20px; font-size: 16px; }
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-logout {
+            display: flex; align-items: center; gap: 10px;
+            color: rgba(255,255,255,0.4); font-size: 14px;
+            cursor: pointer; background: none; border: none;
+            font-family: 'Poppins', sans-serif; width: 100%;
+            transition: color 0.3s;
+        }
+        .btn-logout:hover { color: #FF4444; }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1; display: flex; flex-direction: column;
+        }
+        .page-header {
+            background: var(--noir-card);
+            padding: 25px 35px;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .page-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: 2px;
+        }
+        .page-header h1 span { color: var(--orange); }
+        .page-body { padding: 35px; flex: 1; }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+        }
+        .card {
+            background: var(--noir-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h3 { font-size: 16px; font-weight: 700; }
+        .card-body { padding: 25px; }
+        /* Profile Card */
+        .profile-avatar-section {
+            text-align: center; padding: 35px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .profile-avatar {
+            width: 100px; height: 100px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex; align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px; margin: 0 auto 15px;
+            position: relative;
+        }
+        .avatar-edit {
+            position: absolute; bottom: 0; right: 0;
+            width: 30px; height: 30px;
+            background: var(--orange); border-radius: 50%;
+            display: flex; align-items: center;
+            justify-content: center; cursor: pointer;
+            font-size: 12px;
+        }
+        .profile-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px; letter-spacing: 2px; margin-bottom: 5px;
+        }
+        .profile-email {
+            color: var(--gris); font-size: 13px; margin-bottom: 15px;
+        }
+        .profile-level {
+            display: inline-block;
+            background: var(--gradient);
+            padding: 6px 18px; border-radius: 50px;
+            font-size: 13px; font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .profile-stats {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1px; background: rgba(255,255,255,0.05);
+        }
+        .profile-stat {
+            padding: 20px; text-align: center;
+            background: var(--noir-card);
+        }
+        .profile-stat-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px; color: var(--orange);
+        }
+        .profile-stat-label {
+            font-size: 12px; color: var(--gris); margin-top: 3px;
+        }
+        /* Form */
+        .form-section { margin-bottom: 30px; }
+        .form-section h4 {
+            font-size: 14px; font-weight: 700;
+            color: var(--orange); margin-bottom: 20px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-group { margin-bottom: 0; }
+        .form-group label {
+            display: block; font-size: 12px;
+            color: var(--gris); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .form-input {
+            width: 100%; padding: 13px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: var(--blanc);
+            font-size: 14px; font-family: 'Poppins', sans-serif;
+            outline: none; transition: all 0.3s;
+        }
+        .form-input:focus {
+            border-color: var(--orange);
+            background: rgba(255,107,0,0.05);
+        }
+        .form-input:disabled {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .btn-save {
+            padding: 14px 35px;
+            background: var(--gradient);
+            color: var(--blanc); border: none;
+            border-radius: 12px; font-size: 15px;
+            font-weight: 700; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255,107,0,0.4);
+        }
+        /* Progress */
+        .progress-section { margin-top: 25px; }
+        .progress-item { margin-bottom: 20px; }
+        .progress-label {
+            display: flex; justify-content: space-between;
+            font-size: 13px; margin-bottom: 8px;
+        }
+        .progress-label span:first-child { font-weight: 600; }
+        .progress-label span:last-child { color: var(--orange); font-weight: 700; }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: var(--gradient);
+            border-radius: 8px; transition: width 1s ease;
+        }
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--noir-card);
+            border: 1px solid var(--vert);
+            padding: 15px 25px; border-radius: 12px;
+            display: none; align-items: center; gap: 10px;
+            z-index: 500;
+        }
+        .toast.show { display: flex; }
+        .toast i { color: var(--vert); }
+        @media (max-width: 1024px) {
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .form-grid { grid-template-columns: 1fr; }
+            .page-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+        <span style="font-size:28px">🔥</span>
+        <span class="logo-text">IRON<em>FORGE</em></span>
+    </a>
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <a class="nav-item" href="dashboard.html">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-item active" href="profil.html">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a class="nav-item" href="mes-seances.html">
+                <i class="fas fa-calendar-check"></i> Mes Séances
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Entraînement</div>
+            <a class="nav-item" href="programmes.html">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a class="nav-item" href="programmes.html">
+                <i class="fas fa-fire"></i> Réserver Séance
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Commerce</div>
+            <a class="nav-item" href="boutique.html">
+                <i class="fas fa-store"></i> Boutique
+            </a>
+            <a class="nav-item" href="commandes.html">
+                <i class="fas fa-box"></i> Mes Commandes
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Se déconnecter
+        </button>
+    </div>
+</aside>
+
+<div class="main-content">
+    <header class="page-header">
+        <div>
+            <h1>MON <span>PROFIL</span></h1>
+            <p style="color:var(--gris);font-size:13px;margin-top:3px">
+                Gérez vos informations personnelles
+            </p>
+        </div>
+    </header>
+
+    <div class="page-body">
+        <div class="profile-grid">
+
+            <!-- Carte profil gauche -->
+            <div>
+                <div class="card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar" id="profileAvatar">
+                            JD
+                            <div class="avatar-edit">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <div class="profile-name" id="profileName">
+                            Jean Dupont
+                        </div>
+                        <div class="profile-email" id="profileEmail">
+                            jean@ironforge.com
+                        </div>
+                        <div class="profile-level" id="profileLevel">
+                            DÉBUTANT
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="profile-stat-value"
+                                 id="statPoints">0</div>
+                            <div class="profile-stat-label">Points</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value"
+                                 id="statSeances">0</div>
+                            <div class="profile-stat-label">Séances</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value"
+                                 id="statPoids">-</div>
+                            <div class="profile-stat-label">Poids (kg)</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value"
+                                 id="statTaille">-</div>
+                            <div class="profile-stat-label">Taille (m)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progression -->
+                <div class="card" style="margin-top:20px">
+                    <div class="card-header">
+                        <h3>⚡ Ma Progression</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress-section">
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>Niveau suivant</span>
+                                    <span id="progressPct">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill"
+                                         id="progressFill"
+                                         style="width:0%"></div>
+                                </div>
+                            </div>
+                            <p style="font-size:13px;color:var(--gris);
+                                    text-align:center;margin-top:10px">
+                                Encore
+                                <strong style="color:var(--orange)"
+                                        id="pointsNeeded">500</strong>
+                                points pour INTERMÉDIAIRE
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaire droite -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>✏️ Modifier mon profil</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Infos personnelles -->
+                        <div class="form-section">
+                            <h4>Informations personnelles</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nom</label>
+                                    <input type="text"
+                                           class="form-input"
+                                           id="inputNom"
+                                           placeholder="Dupont">
+                                </div>
+                                <div class="form-group">
+                                    <label>Prénom</label>
+                                    <input type="text"
+                                           class="form-input"
+                                           id="inputPrenom"
+                                           placeholder="Jean">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email"
+                                           class="form-input"
+                                           id="inputEmail"
+                                           disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>Téléphone</label>
+                                    <input type="tel"
+                                           class="form-input"
+                                           id="inputTelephone"
+                                           placeholder="+509 3712 3456">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Infos fitness -->
+                        <div class="form-section">
+                            <h4>Informations fitness</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Poids (kg)</label>
+                                    <input type="number"
+                                           class="form-input"
+                                           id="inputPoids"
+                                           placeholder="75">
+                                </div>
+                                <div class="form-group">
+                                    <label>Taille (m)</label>
+                                    <input type="number"
+                                           step="0.01"
+                                           class="form-input"
+                                           id="inputTaille"
+                                           placeholder="1.75">
+                                </div>
+                                <div class="form-group">
+                                    <label>Date de naissance</label>
+                                    <input type="date"
+                                           class="form-input"
+                                           id="inputDateNaissance">
+                                </div>
+                                <div class="form-group">
+                                    <label>Objectif</label>
+                                    <select class="form-input"
+                                            id="inputObjectif">
+                                        <option value="">
+                                            Choisir un objectif
+                                        </option>
+                                        <option value="Perdre du poids">
+                                            Perdre du poids
+                                        </option>
+                                        <option value="Prendre du muscle">
+                                            Prendre du muscle
+                                        </option>
+                                        <option value="Améliorer endurance">
+                                            Améliorer l'endurance
+                                        </option>
+                                        <option value="Rester en forme">
+                                            Rester en forme
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-save"
+                                onclick="saveProfil()">
+                            <i class="fas fa-save"></i>
+                            Sauvegarder les modifications
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sécurité -->
+                <div class="card" style="margin-top:20px">
+                    <div class="card-header">
+                        <h3>🔒 Sécurité</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nouveau mot de passe</label>
+                                <input type="password"
+                                       class="form-input"
+                                       id="newPassword"
+                                       placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmer</label>
+                                <input type="password"
+                                       class="form-input"
+                                       id="confirmPassword"
+                                       placeholder="••••••••">
+                            </div>
+                        </div>
+                        <button class="btn-save"
+                                style="margin-top:20px;background:rgba(255,255,255,0.05);
+                                box-shadow:none;border:1px solid rgba(255,255,255,0.1)"
+                                onclick="changePassword()">
+                            <i class="fas fa-key"></i>
+                            Changer le mot de passe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Profil sauvegardé !</span>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8085';
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) window.location.href = 'login.html';
+
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+
+    const showToast = (msg, success = true) => {
+        const toast = document.getElementById('toast');
+        toast.style.borderColor = success ? '#00C853' : '#FF4444';
+        toast.querySelector('i').style.color =
+            success ? '#00C853' : '#FF4444';
+        document.getElementById('toastMsg').textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    const loadProfil = async () => {
+        try {
+            const res = await fetch(
+                `${API_URL}/api/membre/profil`, { headers });
+            const data = await res.json();
+
+            if (data.succes && data.data) {
+                const m = data.data;
+                const u = m.utilisateur || user;
+
+                const nom = u.nom || user.nom || '-';
+                const prenom = u.prenom || user.prenom || '-';
+                const email = u.email || user.email || '-';
+
+                // Avatar
+                document.getElementById('profileAvatar')
+                    .textContent = `${prenom[0]}${nom[0]}`;
+                document.getElementById('profileName')
+                    .textContent = `${prenom} ${nom}`;
+                document.getElementById('profileEmail')
+                    .textContent = email;
+                document.getElementById('profileLevel')
+                    .textContent = m.niveau || 'DÉBUTANT';
+
+                // Stats
+                document.getElementById('statPoints')
+                    .textContent = m.points || 0;
+                document.getElementById('statPoids')
+                    .textContent = m.poids || '-';
+                document.getElementById('statTaille')
+                    .textContent = m.taille || '-';
+
+                // Progression
+                const points = m.points || 0;
+                const pct = Math.min(100, (points / 500) * 100);
+                document.getElementById('progressPct')
+                    .textContent = `${Math.round(pct)}%`;
+                document.getElementById('progressFill')
+                    .style.width = `${pct}%`;
+                document.getElementById('pointsNeeded')
+                    .textContent = Math.max(0, 500 - points);
+
+                // Formulaire
+                document.getElementById('inputNom').value = nom;
+                document.getElementById('inputPrenom').value = prenom;
+                document.getElementById('inputEmail').value = email;
+                document.getElementById('inputTelephone').value =
+                    u.telephone || '';
+                document.getElementById('inputPoids').value =
+                    m.poids || '';
+                document.getElementById('inputTaille').value =
+                    m.taille || '';
+                document.getElementById('inputObjectif').value =
+                    m.objectif || '';
+                if (m.dateNaissance) {
+                    document.getElementById('inputDateNaissance')
+                        .value = m.dateNaissance;
+                }
+            }
+
+            // Séances
+            const seancesRes = await fetch(
+                `${API_URL}/api/seances/mes-seances`, { headers });
+            const seancesData = await seancesRes.json();
+            if (seancesData.succes) {
+                document.getElementById('statSeances')
+                    .textContent = seancesData.data?.length || 0;
+            }
+
+        } catch (err) {
+            console.error('Erreur profil:', err);
+        }
+    };
+
+    const saveProfil = async () => {
+        try {
+            const body = {
+                objectif: document.getElementById('inputObjectif').value,
+                poids: parseFloat(
+                    document.getElementById('inputPoids').value) || null,
+                taille: parseFloat(
+                    document.getElementById('inputTaille').value) || null,
+                dateNaissance:
+                    document.getElementById('inputDateNaissance').value ||
+                    null
+            };
+
+            const res = await fetch(
+                `${API_URL}/api/membre/profil`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            if (data.succes) {
+                showToast('✅ Profil sauvegardé avec succès !');
+                loadProfil();
+            } else {
+                showToast(data.message || 'Erreur', false);
+            }
+        } catch (err) {
+            showToast('Erreur serveur', false);
+        }
+    };
+
+    const changePassword = () => {
+        const pwd = document.getElementById('newPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+
+        if (!pwd || pwd.length < 8) {
+            showToast('Minimum 8 caractères !', false);
+            return;
+        }
+        if (pwd !== confirm) {
+            showToast('Les mots de passe ne correspondent pas !', false);
+            return;
+        }
+        showToast('🚧 Fonctionnalité bientôt disponible !');
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    };
+
+    loadProfil();
+</script>
+</body>
+</html>

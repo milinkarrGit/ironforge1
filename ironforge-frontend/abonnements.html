@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IRONFORGE - Abonnements</title>
+  <script src="https://js.stripe.com/v3/" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --orange: #FF6B00;
+        --gradient: linear-gradient(135deg, #FF6B00, #FF0000);
+        --noir: #0A0A0A;
+        --noir-card: #1A1A1A;
+        --blanc: #FFFFFF;
+        --gris: #888888;
+        --vert: #00C853;
+        --sidebar-width: 260px;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--noir);
+        color: var(--blanc);
+        display: flex; min-height: 100vh;
+    }
+    .sidebar {
+        width: var(--sidebar-width);
+        background: var(--noir-card);
+        height: 100vh; position: fixed;
+        left: 0; top: 0;
+        display: flex; flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.05);
+        z-index: 100;
+    }
+    .sidebar-logo {
+        padding: 25px;
+        display: flex; align-items: center; gap: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        text-decoration: none;
+    }
+    .logo-text {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 26px; letter-spacing: 2px; color: var(--blanc);
+    }
+    .logo-text em { color: var(--orange); font-style: normal; }
+    .sidebar-nav { flex: 1; padding: 20px 0; }
+    .nav-section { padding: 0 15px; margin-bottom: 25px; }
+    .nav-section-title {
+        font-size: 11px; color: var(--gris);
+        letter-spacing: 2px; text-transform: uppercase;
+        padding: 0 10px; margin-bottom: 8px;
+    }
+    .nav-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 10px; border-radius: 10px;
+        color: rgba(255,255,255,0.6); text-decoration: none;
+        font-size: 14px; font-weight: 500;
+        transition: all 0.3s; margin-bottom: 4px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--blanc); }
+    .nav-item.active {
+        background: rgba(255,107,0,0.15);
+        color: var(--orange);
+        border-left: 3px solid var(--orange);
+    }
+    .nav-item i { width: 20px; }
+    .sidebar-footer {
+        padding: 20px 25px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .btn-logout {
+        display: flex; align-items: center; gap: 10px;
+        color: rgba(255,255,255,0.4); font-size: 14px;
+        cursor: pointer; background: none; border: none;
+        font-family: 'Poppins', sans-serif; width: 100%;
+    }
+    .btn-logout:hover { color: #FF4444; }
+    .main-content {
+        margin-left: var(--sidebar-width);
+        flex: 1; display: flex; flex-direction: column;
+    }
+    .page-header {
+        background: var(--noir-card);
+        padding: 25px 35px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        position: sticky; top: 0; z-index: 50;
+    }
+    .page-header h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 2px;
+    }
+    .page-header h1 span { color: var(--orange); }
+    .page-body { padding: 35px; flex: 1; }
+
+    /* Abonnement actuel */
+    .current-plan {
+        background: linear-gradient(135deg,
+            rgba(255,107,0,0.15), rgba(255,0,0,0.05));
+        border: 1px solid rgba(255,107,0,0.3);
+        border-radius: 20px; padding: 25px;
+        margin-bottom: 40px;
+        display: flex; align-items: center;
+        justify-content: space-between;
+    }
+    .current-plan-info h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 24px; letter-spacing: 2px;
+        color: var(--orange); margin-bottom: 5px;
+    }
+    .current-plan-info p { color: var(--gris); font-size: 14px; }
+    .current-plan-status {
+        display: flex; align-items: center; gap: 8px;
+        background: rgba(0,200,83,0.15);
+        border: 1px solid rgba(0,200,83,0.3);
+        color: var(--vert); padding: 8px 18px;
+        border-radius: 50px; font-size: 13px; font-weight: 600;
+    }
+    .no-plan {
+        background: rgba(255,255,255,0.03);
+        border: 1px dashed rgba(255,255,255,0.1);
+        border-radius: 20px; padding: 25px;
+        margin-bottom: 40px; text-align: center;
+        color: var(--gris);
+    }
+
+    /* Plans */
+    .section-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 32px; letter-spacing: 2px;
+        margin-bottom: 30px; text-align: center;
+    }
+    .section-title span { color: var(--orange); }
+    .toggle-billing {
+        display: flex; align-items: center;
+        justify-content: center; gap: 15px;
+        margin-bottom: 35px;
+    }
+    .toggle-label { font-size: 14px; color: var(--gris); }
+    .toggle-label.active { color: var(--blanc); font-weight: 600; }
+    .toggle-switch {
+        width: 50px; height: 26px;
+        background: rgba(255,107,0,0.3);
+        border-radius: 13px; cursor: pointer;
+        position: relative; transition: background 0.3s;
+    }
+    .toggle-switch.monthly { background: var(--orange); }
+    .toggle-switch::after {
+        content: '';
+        position: absolute; top: 3px; left: 3px;
+        width: 20px; height: 20px;
+        background: var(--blanc); border-radius: 50%;
+        transition: transform 0.3s;
+    }
+    .toggle-switch.monthly::after { transform: translateX(24px); }
+    .save-badge {
+        background: var(--gradient);
+        color: var(--blanc); font-size: 11px;
+        padding: 3px 10px; border-radius: 50px;
+        font-weight: 700;
+    }
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px; margin-bottom: 50px;
+    }
+    .plan-card {
+        background: var(--noir-card);
+        border-radius: 24px; padding: 35px;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.4s; position: relative;
+        text-align: center;
+    }
+    .plan-card:hover { transform: translateY(-8px); }
+    .plan-card.featured {
+        background: linear-gradient(135deg,
+            rgba(255,107,0,0.1), rgba(255,0,0,0.05));
+        border-color: var(--orange);
+        transform: scale(1.05);
+        box-shadow: 0 0 50px rgba(255,107,0,0.2);
+    }
+    .plan-card.featured:hover { transform: scale(1.05) translateY(-8px); }
+    .plan-badge {
+        position: absolute; top: -15px;
+        left: 50%; transform: translateX(-50%);
+        background: var(--gradient);
+        padding: 6px 20px; border-radius: 50px;
+        font-size: 12px; font-weight: 700;
+        white-space: nowrap;
+    }
+    .plan-icon { font-size: 40px; margin-bottom: 15px; }
+    .plan-name {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 3px;
+        color: var(--orange); margin-bottom: 20px;
+    }
+    .plan-prix { margin-bottom: 10px; }
+    .prix {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 60px; color: var(--blanc); line-height: 1;
+    }
+    .devise { color: var(--gris); font-size: 16px; }
+    .prix-annuel {
+        font-size: 13px; color: var(--gris);
+        margin-bottom: 25px;
+    }
+    .plan-features {
+        list-style: none; margin-bottom: 30px; text-align: left;
+    }
+    .plan-features li {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        font-size: 14px;
+        display: flex; align-items: center; gap: 12px;
+    }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features .fa-check { color: var(--orange); }
+    .plan-features .fa-times { color: rgba(255,255,255,0.15); }
+    .btn-choisir {
+        width: 100%; padding: 14px;
+        border: 2px solid var(--orange);
+        color: var(--orange); background: transparent;
+        border-radius: 12px; font-size: 15px;
+        font-weight: 700; cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s;
+    }
+    .btn-choisir:hover {
+        background: var(--orange); color: var(--blanc);
+    }
+    .btn-choisir.featured {
+        background: var(--gradient);
+        color: var(--blanc); border: none;
+        box-shadow: 0 10px 30px rgba(255,107,0,0.4);
+    }
+    .btn-choisir.featured:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(255,107,0,0.6);
+    }
+
+    /* FAQ */
+    .faq-section { margin-top: 20px; }
+    .faq-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 2px;
+        text-align: center; margin-bottom: 25px;
+    }
+    .faq-item {
+        background: var(--noir-card);
+        border-radius: 12px; margin-bottom: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        overflow: hidden;
+    }
+    .faq-question {
+        padding: 18px 22px;
+        display: flex; align-items: center;
+        justify-content: space-between;
+        cursor: pointer; font-weight: 600;
+        font-size: 14px; transition: all 0.3s;
+    }
+    .faq-question:hover { color: var(--orange); }
+    .faq-question i { transition: transform 0.3s; }
+    .faq-answer {
+        padding: 0 22px; max-height: 0;
+        overflow: hidden; transition: all 0.3s;
+        color: var(--gris); font-size: 14px;
+        line-height: 1.7;
+    }
+    .faq-item.open .faq-answer {
+        max-height: 200px; padding: 0 22px 18px;
+    }
+    .faq-item.open .faq-question i {
+        transform: rotate(180deg);
+    }
+
+    /* Modal paiement */
+    .modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 300; display: none;
+        align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+        background: var(--noir-card);
+        border-radius: 24px; padding: 35px;
+        width: 480px;
+        border: 1px solid rgba(255,255,255,0.1);
+        overflow-y: auto;
+        max-height: 90vh;
+    }
+    .modal h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 2px;
+        margin-bottom: 5px;
+    }
+    .modal h2 span { color: var(--orange); }
+    .modal-plan-info {
+        background: rgba(255,107,0,0.1);
+        border: 1px solid rgba(255,107,0,0.2);
+        border-radius: 12px; padding: 15px;
+        margin: 20px 0;
+        display: flex; align-items: center;
+        justify-content: space-between;
+    }
+    .modal-plan-name {
+        font-weight: 700; font-size: 16px;
+    }
+    .modal-plan-prix {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; color: var(--orange);
+    }
+    .stripe-placeholder {
+        background: rgba(255,255,255,0.03);
+        border: 2px dashed rgba(255,255,255,0.1);
+        border-radius: 12px; padding: 30px;
+        text-align: center; margin: 20px 0;
+        color: var(--gris);
+    }
+    .stripe-placeholder i {
+        font-size: 40px; margin-bottom: 10px;
+        display: block; color: rgba(255,255,255,0.2);
+    }
+    .modal-btns {
+        display: flex; gap: 12px; margin-top: 20px;
+    }
+    .btn-cancel {
+        flex: 1; padding: 13px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: var(--blanc); border-radius: 10px;
+        cursor: pointer; font-family: 'Poppins', sans-serif;
+        font-size: 14px; font-weight: 600;
+    }
+    .btn-pay {
+        flex: 2; padding: 13px;
+        background: var(--gradient);
+        color: var(--blanc); border: none;
+        border-radius: 10px; cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px; font-weight: 700;
+        display: flex; align-items: center;
+        justify-content: center; gap: 8px;
+        transition: all 0.3s;
+    }
+    .btn-pay:hover {
+        box-shadow: 0 10px 25px rgba(255,107,0,0.4);
+    }
+
+    @media (max-width: 1024px) {
+        .plans-grid { grid-template-columns: 1fr; }
+        .plan-card.featured { transform: scale(1); }
+    }
+    @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .main-content { margin-left: 0; }
+        .page-body { padding: 20px; }
+        .current-plan { flex-direction: column; gap: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-logo">
+    <span style="font-size:28px">🔥</span>
+    <span class="logo-text">IRON<em>FORGE</em></span>
+  </a>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <i class="fas fa-home"></i> Dashboard
+      </a>
+      <a class="nav-item" href="profil.html">
+        <i class="fas fa-user"></i> Mon Profil
+      </a>
+      <a class="nav-item" href="mes-seances.html">
+        <i class="fas fa-calendar"></i> Mes Séances
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Entraînement</div>
+      <a class="nav-item" href="programmes.html">
+        <i class="fas fa-dumbbell"></i> Programmes
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Commerce</div>
+      <a class="nav-item active" href="abonnements.html">
+        <i class="fas fa-crown"></i> Abonnements
+      </a>
+      <a class="nav-item" href="boutique.html">
+        <i class="fas fa-store"></i> Boutique
+      </a>
+      <a class="nav-item" href="commandes.html">
+        <i class="fas fa-box"></i> Mes Commandes
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+      Se déconnecter
+    </button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <header class="page-header">
+    <div>
+      <h1>MES <span>ABONNEMENTS</span></h1>
+      <p style="color:var(--gris);font-size:13px;margin-top:3px">
+        Choisissez le plan qui vous convient
+      </p>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Abonnement actuel -->
+    <div id="currentPlanSection"></div>
+
+    <!-- Toggle billing -->
+    <h2 class="section-title">
+      CHOISISSEZ VOTRE <span>PLAN</span>
+    </h2>
+
+    <div class="toggle-billing">
+                <span class="toggle-label active" id="labelMensuel">
+                    Mensuel
+                </span>
+      <div class="toggle-switch" id="toggleSwitch"
+           onclick="toggleBilling()"></div>
+      <span class="toggle-label" id="labelAnnuel">
+                    Annuel
+                </span>
+      <span class="save-badge">-20%</span>
+    </div>
+
+    <!-- Plans -->
+    <div class="plans-grid">
+
+      <div class="plan-card">
+        <div class="plan-icon">🥉</div>
+        <div class="plan-name">BASIC</div>
+        <div class="plan-prix">
+          <span class="prix" id="prixBasic">29</span>
+          <span class="devise">.99€/mois</span>
+        </div>
+        <p class="prix-annuel" id="annuelBasic"></p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i>
+            Accès salle illimité</li>
+          <li><i class="fas fa-check"></i>
+            1 programme inclus</li>
+          <li><i class="fas fa-check"></i>
+            Application mobile</li>
+          <li><i class="fas fa-check"></i>
+            Système de points</li>
+          <li><i class="fas fa-times"></i>
+            Sessions coach</li>
+          <li><i class="fas fa-times"></i>
+            Plan nutrition</li>
+        </ul>
+        <button class="btn-choisir"
+                onclick="choisirPlan('BASIC', 29.99)">
+          Choisir Basic
+        </button>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="plan-badge">⭐ Recommandé</div>
+        <div class="plan-icon">🥇</div>
+        <div class="plan-name">PRO</div>
+        <div class="plan-prix">
+          <span class="prix" id="prixPro">49</span>
+          <span class="devise">.99€/mois</span>
+        </div>
+        <p class="prix-annuel" id="annuelPro"></p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i>
+            Accès salle illimité</li>
+          <li><i class="fas fa-check"></i>
+            Programmes illimités</li>
+          <li><i class="fas fa-check"></i>
+            Application mobile</li>
+          <li><i class="fas fa-check"></i>
+            Points x2</li>
+          <li><i class="fas fa-check"></i>
+            4 sessions coach/mois</li>
+          <li><i class="fas fa-times"></i>
+            Plan nutrition</li>
+        </ul>
+        <button class="btn-choisir featured"
+                onclick="choisirPlan('PRO', 49.99)">
+          Choisir Pro
+        </button>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-icon">💎</div>
+        <div class="plan-name">ELITE</div>
+        <div class="plan-prix">
+          <span class="prix" id="prixElite">89</span>
+          <span class="devise">.99€/mois</span>
+        </div>
+        <p class="prix-annuel" id="annuelElite"></p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i>
+            Accès salle illimité</li>
+          <li><i class="fas fa-check"></i>
+            Programmes illimités</li>
+          <li><i class="fas fa-check"></i>
+            Application mobile</li>
+          <li><i class="fas fa-check"></i>
+            Points x3</li>
+          <li><i class="fas fa-check"></i>
+            Sessions coach illimitées</li>
+          <li><i class="fas fa-check"></i>
+            Plan nutrition personnalisé</li>
+        </ul>
+        <button class="btn-choisir"
+                onclick="choisirPlan('ELITE', 89.99)">
+          Choisir Elite
+        </button>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2 class="faq-title">Questions fréquentes</h2>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Puis-je changer de plan ?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Oui, vous pouvez changer de plan à tout moment.
+          Le changement prend effet au prochain cycle de facturation.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Comment annuler mon abonnement ?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Vous pouvez annuler votre abonnement à tout moment
+          depuis votre profil. L'accès reste actif jusqu'à
+          la fin de la période payée.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Quels moyens de paiement acceptez-vous ?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Nous acceptons toutes les cartes Visa, Mastercard
+          et American Express via Stripe, le leader mondial
+          du paiement sécurisé.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Y a-t-il une période d'essai ?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Oui ! Profitez de 7 jours d'essai gratuit
+          sur le plan PRO. Aucune carte requise.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPaiement">
+  <div class="modal">
+    <h2>CONFIRMER <span>L'ABONNEMENT</span></h2>
+    <p style="color:var(--gris);font-size:14px;margin-top:5px">
+      Vous êtes sur le point de souscrire à :
+    </p>
+    <div class="modal-plan-info">
+      <div>
+        <div class="modal-plan-name" id="modalPlanNom">PRO</div>
+        <div style="font-size:12px;color:var(--gris)">
+          Accès immédiat après paiement
+        </div>
+      </div>
+      <div class="modal-plan-prix" id="modalPlanPrix">49.99€</div>
+    </div>
+
+    <!-- ✅ Formulaire Stripe ici -->
+    <div id="stripe-elements-abo" style="margin:20px 0;min-height:50px"></div>
+
+    <!-- ✅ Bouton payer Stripe -->
+    <button id="btnPayerAbo" style="display:none; width:100%; padding:16px;
+        background:linear-gradient(135deg,#FF6B00,#FF0000);
+        color:white; border:none; border-radius:12px;
+        font-size:16px; font-weight:700; cursor:pointer;
+        font-family:'Poppins',sans-serif">
+      <i class="fas fa-lock"></i> Confirmer le paiement
+    </button>
+
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">
+        Annuler
+      </button>
+      <button class="btn-pay" on onclick="confirmerAbonnement()">
+        <i class="fas fa-lock"></i> payer maintenant
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:8085';
+  const token = localStorage.getItem('token');
+  if (!token) window.location.href = 'login.html';
+
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+  };
+
+  let isAnnuel = false;
+  let selectedPlan = null;
+  let selectedPrix = 0;
+  let stripe = null;
+  let elements = null;
+  let stripeInitialized = false;
+
+  const plans = {
+      BASIC:  { mensuel: 29.99, annuel: 23.99 },
+      PRO:    { mensuel: 49.99, annuel: 39.99 },
+      ELITE:  { mensuel: 89.99, annuel: 71.99 }
+  };
+
+  const toggleBilling = () => {
+      isAnnuel = !isAnnuel;
+      const toggle = document.getElementById('toggleSwitch');
+      const labelM = document.getElementById('labelMensuel');
+      const labelA = document.getElementById('labelAnnuel');
+      toggle.classList.toggle('monthly', isAnnuel);
+      labelM.classList.toggle('active', !isAnnuel);
+      labelA.classList.toggle('active', isAnnuel);
+      Object.keys(plans).forEach(key => {
+          const prix = isAnnuel ? plans[key].annuel : plans[key].mensuel;
+          const el = document.getElementById(`prix${key.charAt(0) + key.slice(1).toLowerCase()}`);
+          if (el) el.textContent = Math.floor(prix);
+          const annuelEl = document.getElementById(`annuel${key.charAt(0) + key.slice(1).toLowerCase()}`);
+          if (annuelEl) annuelEl.textContent = isAnnuel ? `${(prix * 12).toFixed(0)}€/an` : '';
+      });
+  };
+
+  const choisirPlan = (plan, prix) => {
+      selectedPlan = plan;
+      selectedPrix = isAnnuel ? plans[plan].annuel : plans[plan].mensuel;
+      document.getElementById('modalPlanNom').textContent = `Plan ${plan}`;
+      document.getElementById('modalPlanPrix').textContent = `${selectedPrix}€/mois`;
+      document.getElementById('modalPaiement').classList.add('show');
+  };
+
+  const closeModal = () => {
+      document.getElementById('modalPaiement').classList.remove('show');
+      document.getElementById('stripe-elements-abo').innerHTML = '';
+      document.getElementById('btnPayerAbo').style.display = 'none';
+  };
+
+  const initStripe = async () => {
+      if (stripeInitialized) return;
+      const res = await fetch(`${API_URL}/api/paiement/config`);
+      const config = await res.json();
+      stripe = Stripe(config.publicKey);
+      stripeInitialized = true;
+  };
+
+  const confirmerAbonnement = async () => {
+      try {
+          await initStripe();
+
+          const res = await fetch(`${API_URL}/api/paiement/create-subscription-intent`, {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  plan: selectedPlan,
+                  prix: selectedPrix
+              })
+          });
+
+          const data = await res.json();
+          if (!data.succes) {
+              alert('Erreur : ' + data.message);
+              return;
+          }
+
+          const { clientSecret, intentId } = data.data;
+
+          elements = stripe.elements({ clientSecret });
+          const paymentElement = elements.create('payment');
+          document.getElementById('stripe-elements-abo').innerHTML = '';
+          paymentElement.mount('#stripe-elements-abo');
+
+          const btnPayer = document.getElementById('btnPayerAbo');
+          btnPayer.style.display = 'block';
+
+          btnPayer.onclick = async () => {
+              btnPayer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+              btnPayer.disabled = true;
+
+              const { error: submitError } = await elements.submit();
+              if (submitError) {
+                  alert('Erreur : ' + submitError.message);
+                  btnPayer.innerHTML = '<i class="fas fa-lock"></i> Confirmer le paiement';
+                  btnPayer.disabled = false;
+                  return;
+              }
+
+              const { error } = await stripe.confirmPayment({
+                  elements,
+                  clientSecret,
+                  confirmParams: { return_url: window.location.href },
+                  redirect: 'if_required'
+              });
+
+              if (error) {
+                  alert('Erreur : ' + error.message);
+                  btnPayer.innerHTML = '<i class="fas fa-lock"></i> Confirmer le paiement';
+                  btnPayer.disabled = false;
+                  return;
+              }
+
+              const confirmRes = await fetch(`${API_URL}/api/paiement/confirmer-abonnement`, {
+                  method: 'POST',
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      paymentIntentId: intentId,
+                      plan: selectedPlan,
+                      prix: selectedPrix,
+                      dureeJours: isAnnuel ? 365 : 30
+                  })
+              });
+
+              const confirmData = await confirmRes.json();
+              if (confirmData.succes) {
+                  closeModal();
+                  alert(`✅ Abonnement ${selectedPlan} activé !`);
+                  loadAbonnementActuel();
+              } else {
+                  alert('Erreur : ' + confirmData.message);
+                  btnPayer.disabled = false;
+              }
+          };
+
+      } catch (err) {
+          alert('Erreur : ' + err.message);
+      }
+  };
+
+  const loadAbonnementActuel = async () => {
+      try {
+          const res = await fetch(`${API_URL}/api/abonnements/mon-abonnement`, { headers });
+          const data = await res.json();
+          const section = document.getElementById('currentPlanSection');
+          if (data.succes && data.data) {
+              const a = data.data;
+              section.innerHTML = `
+                  <div class="current-plan">
+                      <div class="current-plan-info">
+                          <h3>Plan ${a.type} Actif</h3>
+                          <p>Valide jusqu'au ${a.dateFin || 'N/A'} • ${a.prix}€/mois</p>
+                      </div>
+                      <div class="current-plan-status">
+                          <i class="fas fa-check-circle"></i> Actif
+                      </div>
+                  </div>`;
+          } else {
+              section.innerHTML = `
+                  <div class="no-plan">
+                      <i class="fas fa-info-circle" style="font-size:24px;margin-bottom:10px;display:block"></i>
+                      Vous n'avez pas d'abonnement actif. Choisissez un plan ci-dessous !
+                  </div>`;
+          }
+      } catch (err) {
+          document.getElementById('currentPlanSection').innerHTML = `
+              <div class="no-plan">Choisissez votre plan d'abonnement !</div>`;
+      }
+  };
+
+  const toggleFaq = (el) => {
+      el.parentElement.classList.toggle('open');
+  };
+
+  const logout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+  };
+
+  initStripe();
+  loadAbonnementActuel();
+</script>
+</body>
+</html>

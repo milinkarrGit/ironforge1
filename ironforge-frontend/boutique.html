@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://js.stripe.com/v3/" crossorigin="anonymous"></script>
+    <title>IRONFORGE - Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --orange: #FF6B00;
+            --gradient: linear-gradient(135deg, #FF6B00, #FF0000);
+            --noir: #0A0A0A;
+            --noir-card: #1A1A1A;
+            --noir-light: #252525;
+            --blanc: #FFFFFF;
+            --gris: #888888;
+            --vert: #00C853;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--noir);
+            color: var(--blanc);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--noir-card);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 30px 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 2px;
+            color: var(--blanc);
+        }
+
+        .logo-text em {
+            color: var(--orange);
+            font-style: normal;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            padding: 0 15px;
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gris);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0 10px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--blanc);
+        }
+
+        .nav-item.active {
+            background: rgba(255,107,0,0.15);
+            color: var(--orange);
+            border-left: 3px solid var(--orange);
+        }
+
+        .nav-item i { width: 20px; font-size: 16px; }
+
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            transition: color 0.3s;
+        }
+
+        .btn-logout:hover { color: #FF4444; }
+
+        /* ===== MAIN ===== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            background: var(--noir-card);
+            padding: 25px 35px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .page-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .page-header h1 span { color: var(--orange); }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,107,0,0.1);
+            border: 1px solid rgba(255,107,0,0.3);
+            color: var(--orange);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .cart-btn:hover {
+            background: var(--orange);
+            color: var(--blanc);
+        }
+
+        .cart-count {
+            background: var(--orange);
+            color: var(--blanc);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* ===== BOUTIQUE BODY ===== */
+        .boutique-body {
+            padding: 35px;
+            flex: 1;
+        }
+
+        /* ===== FILTRES ===== */
+        .filtres {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filtre-search {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .filtre-search input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            background: var(--noir-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: var(--blanc);
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .filtre-search input:focus {
+            border-color: var(--orange);
+        }
+
+        .filtre-search i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gris);
+        }
+
+        .filtre-btn {
+            padding: 12px 22px;
+            background: var(--noir-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .filtre-btn:hover,
+        .filtre-btn.active {
+            background: rgba(255,107,0,0.15);
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        /* ===== PRODUITS GRID ===== */
+        .produits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .produit-card {
+            background: var(--noir-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s;
+        }
+
+        .produit-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,107,0,0.3);
+            box-shadow: 0 20px 40px rgba(255,107,0,0.15);
+        }
+
+        .produit-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .produit-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .produit-card:hover .produit-image img {
+            transform: scale(1.05);
+        }
+
+        .produit-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-bestseller {
+            background: var(--gradient);
+            color: var(--blanc);
+        }
+
+        .badge-nouveau {
+            background: linear-gradient(135deg, #00C853, #007B33);
+            color: var(--blanc);
+        }
+
+        .badge-promo {
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: var(--noir);
+        }
+
+        .produit-wishlist {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 35px;
+            height: 35px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            color: var(--blanc);
+            font-size: 14px;
+        }
+
+        .produit-wishlist:hover {
+            background: var(--orange);
+        }
+
+        .produit-info {
+            padding: 20px;
+        }
+
+        .produit-categorie {
+            font-size: 11px;
+            color: var(--orange);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .produit-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .produit-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .stars { color: #FFD700; font-size: 13px; }
+
+        .rating-count {
+            color: var(--gris);
+            font-size: 12px;
+        }
+
+        .produit-prix-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .produit-prix {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .produit-prix-old {
+            font-size: 14px;
+            color: var(--gris);
+            text-decoration: line-through;
+        }
+
+        .produit-stock {
+            font-size: 12px;
+            color: var(--vert);
+        }
+
+        .produit-stock.low { color: #FFD700; }
+        .produit-stock.out { color: #FF4444; }
+
+        .btn-ajouter {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid var(--orange);
+            color: var(--orange);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-ajouter:hover {
+            background: var(--orange);
+            color: var(--blanc);
+        }
+
+        .btn-ajouter.added {
+            background: var(--vert);
+            border-color: var(--vert);
+            color: var(--blanc);
+        }
+
+        /* ===== PANIER SIDEBAR ===== */
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 380px;
+            height: 100vh;
+            background: var(--noir-card);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            z-index: 200;
+            transition: right 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open { right: 0; }
+
+        .cart-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: var(--gris);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .cart-close:hover { color: var(--blanc); }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .cart-item img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .cart-item-info { flex: 1; }
+
+        .cart-item-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-prix {
+            color: var(--orange);
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: var(--blanc);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: var(--gris);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .cart-item-remove:hover { color: #FF4444; }
+
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gris);
+        }
+
+        .cart-empty i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.1);
+        }
+
+        .cart-footer {
+            padding: 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .cart-total span:first-child {
+            color: var(--gris);
+            font-size: 15px;
+        }
+
+        .cart-total span:last-child {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient);
+            color: var(--blanc);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,107,0,0.4);
+        }
+
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+            display: none;
+        }
+
+        .cart-overlay.show { display: block; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .produits-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .produits-grid { grid-template-columns: repeat(2, 1fr); }
+            .boutique-body { padding: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .produits-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+        <span style="font-size:28px">🔥</span>
+        <span class="logo-text">IRON<em>FORGE</em></span>
+    </a>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <a class="nav-item" href="dashboard.html">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-item" href="#">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a class="nav-item" href="mes-seances.html">
+                <i class="fas fa-calendar-check"></i> Mes Séances
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Entraînement</div>
+            <a class="nav-item" href="programmes.html">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a class="nav-item" href="mes-seances.html">
+                <i class="fas fa-fire"></i> Réserver Séance
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Commerce</div>
+            <a class="nav-item active" href="boutique.html">
+                <i class="fas fa-store"></i> Boutique
+            </a>
+            <a class="nav-item" href="commandes.html">
+                <i class="fas fa-box"></i> Mes Commandes
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Se déconnecter
+        </button>
+    </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main-content">
+
+    <header class="page-header">
+        <div>
+            <h1>NOTRE <span>BOUTIQUE</span></h1>
+            <p style="color:var(--gris);font-size:13px;margin-top:3px">
+                10 produits disponibles
+            </p>
+        </div>
+        <div class="header-actions">
+            <button class="cart-btn" onclick="toggleCart()">
+                <i class="fas fa-shopping-cart"></i>
+                Mon Panier
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="boutique-body">
+
+        <!-- Filtres -->
+        <div class="filtres">
+            <div class="filtre-search">
+                <i class="fas fa-search"></i>
+                <input type="text"
+                       placeholder="Rechercher un produit..."
+                       id="searchInput"
+                       oninput="filterProducts()">
+            </div>
+            <button class="filtre-btn active"
+                    onclick="filterByCategorie('tous', this)">
+                Tous
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterByCategorie('Suppléments', this)">
+                Suppléments
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterByCategorie('Vêtements', this)">
+                Vêtements
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterByCategorie('Équipements', this)">
+                Équipements
+            </button>
+        </div>
+
+        <!-- Produits Grid -->
+        <div class="produits-grid" id="produitsGrid">
+            <!-- Chargé dynamiquement -->
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== OVERLAY ===== -->
+<div class="cart-overlay" id="cartOverlay"
+     onclick="toggleCart()">
+</div>
+
+<!-- ===== PANIER ===== -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3>🛒 Mon Panier</h3>
+        <button class="cart-close" onclick="toggleCart()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+        <div class="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Votre panier est vide</p>
+        </div>
+    </div>
+
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotal">0.00US</span>
+        </div>
+        <button class="btn-checkout" onclick="checkout()">
+            <i class="fas fa-lock"></i>
+            PAYER MAINTENANT
+        </button>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8085';
+    const token = localStorage.getItem('token');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let allProduits = [];
+    let currentCategorie = 'tous';
+
+    // Produits statiques (données de base)
+    const produitsStatiques = [
+        {
+            id: 1,
+            nom: 'Whey Protein 1kg',
+            prix: 45.99,
+            categorie: 'Suppléments',
+            stock: 100,
+            badge: 'bestseller',
+            image: 'https://tse2.mm.bing.net/th/id/OIP.F_1F6KPUp3SXpeNJBMhsyQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
+            rating: 4.8,
+            reviews: 124
+        },
+        {
+            id: 2,
+            nom: 'BCAA 300g',
+            prix: 29.99,
+            categorie: 'Suppléments',
+            stock: 50,
+            badge: null,
+            image: 'https://th.bing.com/th/id/OIP.gzTFuuFb3ypv9JJX2cz-jQHaHa?w=200&h=200&c=7&r=0&o=7&pid=1.7&rm=3',
+            rating: 4.5,
+            reviews: 89
+        },
+        {
+            id: 3,
+            nom: 'T-shirt Sport Pro',
+            prix: 24.99,
+            categorie: 'Vêtements',
+            stock: 200,
+            badge: 'nouveau',
+            image: 'data:image/webp;base64,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',
+            rating: 4.7,
+            reviews: 56
+        },
+        {
+            id: 4,
+            nom: 'Gants Musculation',
+            prix: 19.99,
+            categorie: 'Équipements',
+            stock: 75,
+            badge: null,
+            image: 'data:image/webp;base64,UklGRqgeAABXRUJQVlA4IJweAABwZwCdASrKAMoAPpk+l0glo6IhMXk78LATCWlEeFAA1/QBieH6c+fvwl/I+Bv6L9t8ve2P8l4C/dPQF2J/uPiC4vdbwAL5wvts+RD8bzP/jvUA/Lf1x/7/gw/jP+P7AH8o/vP/T+7v6jv9X6sfbL+5f8T/4e4X+xH/O9eD/4+4z9uf/p7rH7H/+lVoc5AmgRb1Ph1ReHGRaJU2hLLlEvpKFvN83Fml0yq2oKDTU4R3QH9DstQQx1ScDm0Oq1V3PvSrNmxW2Bo7YyEVJOtOhCEjCdPoPEJjP8Bs1TxYYx5O6I9FV5jfBrrSNsmxdsTZ2a8XMezvVOXKewPEuEFXgS7De+x+dY8tCd+5z2AkB/4PMmbhoJ6dxqUNDpaMzqtY+dUvKwlIjyxmqgbWsO4rJ+Jw6zDzQViFXkKZAF0C+DmuE3l1btJp6N+NucDpL/ryUnDHrkBFOvC1+EFHM2Fe20WvrWPrHZmRu5OXR/8ssO5mwzLJyaXy0C7qbLNnNyJOmQdUYafqKW6dMvkws12ORQLKFydZyZn3LVNhqyuwtAsVRGOH8E99JemuDPgEJPMJ5/dPkxlMpAGYZv64xb3grNSUi57VcvOfrG1+k4IHoZjbmREZdvg88G2Iu/W3RNoWcTaIRyGghY9+aszaUVDwis4Gu+v+To/YdklDhh22joKyg2kpMiPcQSUxKNiLFkIxoCyo6ZtLWqZ0eynRFDNw/Lo0Gi6v9oZCCFgICJMRSqKvpmF/Gv908XEZ6ELMlzwBau9vy4XGIIG3CPTLYnfj8jFJ3pnHwTFyTo7SGHROPEUaql+fQYZv3BftEdkxPEldD5QArTBodWjALiN2EepGLHMfSPUBwYceWcWOKcmTDceYyd870LyIAbkAl8fihGA8PgbCEq//KbTXP0FmoCov6sUH9ny2cJ/FIfKrsYxbU1OPszudKvqJDzG5fS3xHsxhxg6K3pdQE6tSqdC+xYht6cPO01mqfxE98uyPgYlislRpl8UOc+UDYlgu4Tsk0HVdtq4nJ3S3SEA19lVXsa2sf43zRilSTcz55x1c0s17fa3nlhxA4QAkCeGNR4q/8OIkAr6TVwiQ1nxUi/RMLq5ZkzcOhisbAAD+zHMnXKyTsH7cTUvgTT4bZX6jq+VH9fEbmscwBV9UM9Wgg6aaSqnRTTrsZ7dpthXSMjD4Zmu2pncSYyCrLwahjVUUII2uavyaXzJ/CsHaJvSsCN/dOyn+JFrrzDU0cHX51P9ri6LiESYrPSy/JLJSho1QnfGxPutE+UoZ7bc9dm9UXa8QPgm949Rwu3a7NlJBzVYx2uNgB77O15KRFtlirzRyQGAQpH2j4sdGCrVPqjcBWhcJYxjrd93/k373RP3g2lTlrWquL8jyKyH+HkURwo0NRc+k6qt2/XQWGFLR+8gK6fKfzmkFdNCQxsSOMfz+aqficW2O3gutoFRQkoWRQa33pAftw39uIm1S+1n6go2yWnVUEl4viIc5p0R2+baKNfj+wo1ixZuTTs+LT77laEh5j+mO1vuaX4vv41fRFoQ9n4H++0/i/L5BjA/dy5/v9kwvvZ3dnZvAzumeMwIc6uhS0TruZd+Iwa/mthCo+J6dt8vw2wP+JnO0y/SxS1aETFxRnwfK3s1K2taPB7RQrdzWz/cyQgT8A1IkgemdfecIjv6AblRQj3I2e2euvt/+AsD5uJVeDvDvoh1jHw5BnjupXhsFjjXepstVHZM4ILFFERbtqNg1p9nxZsEAzHvXBUiNhoXSMpdCeiJnDYpcCayJn/C/6o8KBQ1uyPRuaVP99mJt8pzDZzn4TITjd8anTGXxtzAztW1uza3SpHn7/zk403m4GeVX7lUc1W40DTTiNoGJptsRCpaYeUZfawuQffEinmtFNOdLA5o6Sd0VYoc60YXNX6Ttm2gYpzXBT9X3QjTqgnuacJ18Ud3FkN5zFayXE6iJyEOZKpsl4uO7X0vQVpO87aTZubm2Xqq1qrLVRdfwJ2HJBd0iD/SDfOXk5Pja5fR9pqxxof84JOfjucd5yjF1UNr/LENR30H5yCjaufLVcjrfD1ByrPp7IxU1FTGwziAGJJmIR+88ozPS4mlC4d58EOMurpoeXzEkKaPDDOCI+FZPy229VQW/2g4wpqFx9rAruhpGOdl4w9RCzPmggg8oG1YusYP1ZmrZT4AErbgpfU8rVrWEXSKt+3N6F1zSIqxSA5JrkYzoa5es67VkXndYndzlOBzX/zZxTRLVhmOva7HZVSBb82lGCBKhAJ+ldkZuo8MzjgaqtfR/hzsLBl2+fZC+lVYeRZJNJkPoFfsKQGQy2oJjb361M6F9pjLDwiq07mT5wg1gP8Nn6nKzXgL6ZHXWiZWiKBx8vV7HYNwJkhGXZyU7trMoSanIP0uKTJg3uKc8bpBSZomQDovanQQBO+XhqBiUFOfjrGNqnaubHeCXeRuywwI1B6ZWu9G66IFcrObKz7dNNQl/RFraPQTy8UQer5CE0OuB8+AxWy57cr2BmnnWv+/luNQDRe/tmBRhioCJgQL/YRUS7ToltCXqKdCAn4v8RX3emuhLsU7o+jgIrh4pw3+ASi0/o4kQqCrqG8mjdFPKF+l1TwdqIomju2QqWNbTdQv10JLoVoVX/cjgaQYWN4sABkW3g9A+a+Zx16wtWKTqJbtLM4bCmMuy9OUCjYMM5wRcGlgQCa37S6u8Whp3XTt4ZqV5/wEUokaPPqHHy0dVf6tbhrSatku9jAefqqJWb7D3ZE3anU6D2hbM0qhpV6YPE2mVFnXFB2k6lpSiGyQQFOK96OHfWahGVigrazRopH9jeMfDqU9zZtPqUaWzWMzs6c8BgMofSZiOBjwpgR5OGrMyKkomqyRtmLnBpNbWm0oKFedbWz+JGdoYsxqEoo5ZQQ0I+2K89FbgRvDqAtKD5lkfebIE1x7MAhUOfcn8ZdYBTzokoYHQcNf7m2HFbfAXeKN0Q3fEUyFkqDJ+7bGdRgdgo6KoIo1ipS9CTF55J0IPUT/+5hftERPffZkPIC2lgV2kDg1LCtjt+pKQlMrfqUXAm9/XOnTCJvITi+eH1Ot9VGFCDIbw8CDiq6Fl1msDGcIxjrjvhKKXp0ImE24rqauMlSMtIgyc1nibUlxZzOd6Go1qBoxs5hpa5HurIdhcG2LfRPtKyW2YmAQnUOr2fhDwKgtjEESVExOzz3813MYprB0deA80YHMAFAv9+tcht6vWii7bMcFV0ENAaIec8Xk5ZbuaY3+a/mIj/eFXiis27cmRq7Nf3jVA7njrTVDcLRHmsoj0JXL2xPn78ayNemoRoTXYNNlVN51LTEXCyRx8tqJ+xf4eijcGHJYBni3msaPTGcla2NrZtY3m2qyZpOdIJbpBrk+PyyWAivqSoEgmv99wuTyn/qNwANAh48QRGOOS4FY5Ov1G5ITGGrJhKWjffsgWtoNr49TXcbRMZiyzuHbEx5p97Me9vD49viJASyk+ijiT7M4PUVxKK3bRStRdnbezXbKmJ/vp5vrB174MlRhghFULTLQu2l0JqeaHnYcoNNaNMNXZdFgxVXEBBnrQ24t0+1nLwvPCsZB82VNWA008JrpKd30iCOoMeNgUnSK+PntjLnwVu94tH9RhGAXh2dnQmspE3aHQLNt44IEMyAgPQbTPcb1xfMPZ4OapxithZgtfZS0M2D23wJqPhZA6Atp6hbGefoGBx53gLIgrkL6TkJj92bJFYpX/PQqIV6Tasp/Ok7o0JGohYqDGoDZ+w/Q8ng2BOoftqpLVZib6r9jqm95KjJTedls9VsPPTgHxNI7bmYm8sJ839B3FNkXdZEGf27hbbqnmNKVH5aRskTwf0p4QG+v9Q2VYRavzxWtfwTl0U58UKv4J3e9Qs9XS7mvTT5msAfS6gh8uIsUMfAkcJVpnfShgt04OsA/9LB8hVql7Pn6bNMKORzBxkKYjRlTcz4JddwVAZxPqNmPRxRLY1oNT8iUJjJoxAmB2tMLEmEvZ2KbE5ywoaqai0iwaaPP7zWAib7+D27FEntPkqooIeVHaDTcH/rlHBV04nqyyWLp4gtUFz05hdEeYSORFaoldxyLKDmXmPgr/R46CWKrajOnZBZOyxeN6F2pQUEgA9+cYDIRvbHo2SGVSI0qv/aNoXuwTQe2DUGaPAunqKFXdH/+co2uEARPJ938VWMKqAMx8J5pSFcasE/dosS3yHkVXe/15uhEI3FnTBYNU3SXETtosmxRaXksWtIlS2VemxK0kgcl6yVeNGnzsBM75h0pYT8uRaaoXMAeBDEQyoK/ZzW0vpLq7HQ6NJc64bFj4FaECudNI1/Ma7YndpYac4g1S07WYLHGBc6Ri1a+6KDN589R+s4oZtVeoSdH2TZLlWKxNgBIhcJKRPi0OSLElIRYVrW1FTJH5KIz+kbrba6dZWl7SpJe7OdUHAhXisxG1wqQZLv2bVfFhOdJehn/l+QhFFy7gk6cYpWTd9oOrhplDR2OwE+vDYg3fErVFWsPi/uxw8xTixgLKsvEZwYzjxkMKHv/4QHybq/L3x6KtuRmghDh2sgSySjl/HW2JT6J7NSBuY2ARFEFxHLSB/9UUDa5Jj0EqPZWyH0pYRy0ZCjkujRPCvcTVdlS/WbcZfr78e2LxRd4vG20yIYtT7S6SUYlti/rsOD7p6TO3BxyQLqryvqPg98XX69EEaX4phCkzqI5hm4a7wlHIBrMGWp01mi4C5W6I6l9RkJWgc4xDtgZA/QMt3zP/GUMOfWDwrIxBL+ua82UOvt7aLe2tH9SGV47YT8PCkppXXM7gc3hfwRzGQ9JDkUN3s6vutk/vea7R+8g7yaPgIg4VDir+VQaELvbNQip0jS1kK6gajyMO12Az1hpK+PSvzFuoihzDZX0bpRKPTKOPvF9cWRTRiH4mz1TMXFo6UznSOlTOBLXOQUOl+33B6xkKUdQkK5N4qgTBN6F27uqSgPvywaifLhDgGJH6EeAf+X+uoIHLYlGLYQWNT06krthhRoYJidRYR/U/KWAai1u4p2UD+GJLFCS48GpUiEi+dx2i1xp/BjeNaSdzTyWF3KDgHjUhl7nW7NYm69kRj788Le9a/D6IMHJV7Y6EcJ6lrFE5dbqfv2HsOniCn6KzfvYMsZTnqR/a/P6bFH56JlBEblUlR74YdgY0UiQXehDkD1eJVQ98UuWVGSZhRJx1/TzZS+a4IRrsktez8iS7kb0CAYQudFIL01R3fV+BWk7eiPFZyKq5JkasGR9XWjGmzgS4EygxCWCUBH+/FU9NX3qRpdcLwV2mSdwakdBzarI8FT2hoBgi7nGhobrHePDBBxGTetqjOfl/ly0f7VMrOV/Ei3mOyVE3HApTn6oZIo+b0FdFgT5Y+eCFfAvPyBBF1rN3Mst465BJtD3KKAUhV9K6g8kbEJ1Xovz10cxoG+DwpgKrOykiCDstC9u92JsyH1FH/rj15oI+ATULYuqUwbxu7g+gRxmW+ShkepEa18fjAwo7g7XMCc7B0EBIjHpedarFyj64ZD8o70z/Tuj4OakrsAQ5gFK64ytFKavb5BnR9nhDDaxa7d1Ll6QfKFwe9HVZ1ytVBrtix+mmoe2uV9sygMKouIrmhlJV7oqHxP1VuJPEGJt1kZbUeOxNiiXzyupK7ACHyGWJTKDyRebAZEcFi9S9elR8LdNO4Vp5hhFsq8PYVWnYbZ20IbTJ273jsnJJ3fGLcXARYJFf0kpTws82HoMHpU5/rtZU2uZMPu7OJFskBEgelantWkmGfPDupIl4G8uilB9+ThBo61FTqNQ3yAePeCdZnpk4FVEaTxnEYpQhFmpZIdz1Rw4zXi1HmYpVJrLOtrV1U2DqeU1NOKyfEpPT6MDFDSRlZvP7BeXhpEcxKjWlM4jutoY10EeIL/2MN2SeJC6FzQ9qRyt5GMrJfJxApXGI/+bWuy/FGlQbyiJDS/Rt3VAFC9yigNZmdf2n7pD7tmnao+LRLvqotti/GYWl0FjH/sBlhM2KMLPTWZRbAIuitjItFPFUkQsmHBkByXQcqmX2BShOgXEh8zAJMrP4rPl2g96+9bhLaIHCAXFinLSw9MMps2X6qtFXvxp5JaiPIg707NRlAgjm0wIFUdjEpkCF7Ylb4qhkQNe1ucAuNcTrFdCe90mblMEAdEL3LrYkW3G3ueg7fQ4ecK2TLCsBt7j/0sJwlJpH4pKtrUgh/Jj+GTmjiBl/ktFynw2tYR0bEO3C7yj0LkEmXEHtdJkKNd2weCF2k6i3Ehw8R8hVadO9Kzh8OAuf3CwDlyUL8pTfAa7VnsQBsUice1y6rhccorwNZUS46is1YYWZZtPCAR17TvkX0kfMnaex1IJ1RDUguXYCDWjbJwi+eedvcCH3itTyQ+HuqMxb7BjBjvvC2ySiAJePjYNkgY3QGjjqx2jmh1FitqLubzUVQMwDiTeV70SlNBmAVta8Dpk/1W3j02QB/8knGDQ0s3u08auugMbLkqAzBzCkHxVJOT2+lwAL1VWJaC2SQGJbgSNEx927WFdEwzVIzgMlQdKQpnfwzFGghrJK1a05QQrweNZa7CgXZuuJrlFxH6RN8DChf0A4JjSRGep2ePQC68OgobNzmTDR6yFtVcIC1D4U8CbhmfQh05iW58PV5n6D/FlI30rGWTdeDeOGftEReB3d3rLZy1jbsL1ne1N/15BzbiJM2sst4AmOc2KVCHqKIdTcK0mIpBtqbU8FhncIdJpnwCOHyiYBzA/poKHxP/sK/+olxPIKq36CJbQSJBgAARe3FJbJOJ1H5ika9OyYUzrLhi9zajgSHayqWM63XWYL+QoBSMVDHhgCF9AdiqNmRYMIn+4h/B6ghUIxCDVNW2jwLVLjjw0BqhXQZoWVGDWAcbYuCRHGs4xv8pI/fzWd5j8z6Z4egjxLn1tbo97FADecyCSEicKYvBC3th3Xuq5qDRMFZIOIQWQadb8dGmRtugDcg9j55Ummq/fuK1eWekXy1qG+KYzv6jEGEz+q6615fWkTAyGQQV4B9HiDsU+sUkBO0ZnPWMPFlLTeYWK8mkPSHNkauCyV5+uIKnJVBoOyRF1n2ex3P1WowVxnBAoly+gWRMm7Y6lSvCGXnj2dzlcw9wAYhYKBszFev74bmjSBLM6RUERpjtQrlwXWsg4V9JgpJEle2sVdIa8N7oWwl+1+UVDJzDFwdBmnUsrJ41s/MzhBz/C1d8qcZuOUrMZhDhXp3tzoTbDKLVvJ8T9PfSezoRLdr5A/RPqGum2BXbbnW3k8VPNkn3awehLjywVZMJnjreRQWqc9ohi0cq5IfCObSuCY64Oo+kog6xjuSNHCw21tBNIfHiDV9DxSyQeA/MIpVcb40ggybf+zmdRApWz5Wwb/uBck7aUqZowX8vTyBtGeZorSeedTEgaS/pJzeehe7tjyfDq7cjAdENzQAMr7FhdJ+LEVUcSvNQJP0NJs3sXPdY8hTC7EAnyiDGj0hzUGphh9q3Au34mRz0F5sQNKijOYMAG6hA1pe94f1l0DDc5j+Sn+OpzZML3wz/syOxy5m8fW6f807/hqeDKSnCWt2Jsu03WOz1PjOTeHOdRPu6+k7B9AAl1G1rUhvT2gvWUR14M0E5wMlfSfoXIZWo+t/8ZVxwXXV+531UMC0B7VIMloU7MBk+GcuvSYfhO/8CNS9qv8Ie9X2QrwWtUmjfbO5PWwdaf+/Qdtc/lfgxcwTvTBlPS4zi7lihgCJHD0w/v0AH/OZZic4NgMSCnZV1s0a2p+bbR6eaFe7EPQZqTiV2QV4yz1ebrTdiPPt8MCABsmI2MoNG/L8ATZAnZV4NWUytzxvQiz1mUiZYtoKd5BdLhc5F/aayDHMDsAWXC6bxdZ6332/I84KS1b1WCiwulNXvzuNHFY0pE9OZDGPnOydVAqfP87ut1DyIDNbftPe3eysGMsey09e74JAfPnzfN+IB4NVZ8os48vu7piqw+HzUfKV9A6ohzuUVMh1IP4KsjWnKTxc3uwSjfbvaIoHppO0+/sBs7ilrcIm9Sq9Pit2/ZL/+YAaGEmIV0ZpuqRM9eWAKipvsWXdrSzwrtUH5Xr4C+Hr7cSsT8F0f5rIROcqgwO0i+KLRxTPvCx4T/lfGeiA+hNH2stEire8BW6e+OYpvf29L3TRYkEAKGeeH+R0LZ/u2JcyeS/Gb3DGSnIQTNJwxc6DgDRmE8ohC0FlPXkQoceFret4nXD24raKmaE2qYBmig4Cln8v1AxumsV5svYidLS8O0EUAkyuvNT3YeYs4oH/q6iC4ug2LzvqaELXyySZrC0tbYYf91MRRFBi9M48UqdmrjmkJqSw5oBEsKsgeO1dFTl5ZPQ57WBp7teuFoR1PPLGu0rcrgrKFr8c8boRA23B/rJu0AMruSjt3M1VtiOxHTQopjoAL6wRyezdJVYKDcGnGM6U0jY7tAd7+7k6c+r5lnwNTFnYxgvbr430APYTzB5x+97iBjFYDbQi5sc7uTx3FQyJkBPPVjSckdNulP25yjc3LynsBpYrnUVWGhBVLZ5Pb00Bb+uoptPc2QvBZv3vcIxHxdBgf8nq3ibxg50cMIpQIzGojKL0GpWwLtJCJ0L30CLC9IiVmMbl4zd780V4w+i+c8YddgCK0K5ErR6w/uYxQX9hBQo7R1MP5DpsCFWP+VW+DcY4Rzb81xcQrYudlqxbKXpb+Z9AHXAgQKGE0YqAXCGMoFAJJCM83Un6FksblG2KKtsGMEQkYl9V/QHMWObXJSuEs/JyLUY6qx3T2j+1rHR7kT8EwaNn9z6v7HeyBbHCJuIZMWtxD/bX/KgfLX/PcDn7nCszY1YaHRitxsOgOyfjyGYJdbqnH/gnQ9zMTRkNvFMYTsC1F5Zq01dfBLMQbhmQE0fKsY/OLt0GkH2Z+apjpJo2cLVTHn3XzrTMinhredHpSWzfjFtUOgbGJNpJ+2kzveJgYHMXSxFwst4cX9aUCOx6l2T9wurpxycrGYOKElEzHwqIi9RNX9+hY7v9J/702VhzpqByQQnmfPMXZ4HF1RQy7ggwsBVcs4tTYqdfviiTJ/oleeoxhXi0P/tC/V+IsD23QCfUayYUekKqljkwAEFc0x2JR8O5c3Gii/Uj6jkHiJD7fSBYb3i4p/RNr9VqUn4m2QCU0QzpfNAEk6C50amt4/KDJYGX+hCAsUCu98uSNOZNNX7SENi2/EP5iIsBvweJ3thNvv2PVHXx8CJgfzd9gTjzjYibPIEOaep93sDmpouMdqdlheK5QqJP7GSNQNXXDwB1f4yJFf8G2NolVzaHI7nxsPClm0BMO+r7TMFez46KskSi/tq20KNYX0uzcA4BFW8HdCaCTgG/+2DA52IFMro3m1Rkj6wUWVBN4mCNyrIGoxQA1uzagqX1taOJpUrAI6o+t58au9RwFajZJZ4Gpbpi+va+EEf+S7JX0KHqAa0/Pm+5PfgUQ6A4vP1OztkGyW0qaBdbcfXR35uNJXmRtLk2xSP2zOl/yTs9j2tjDgy0siQp13j8zxZB1bVRHKQcqmqbJlPOB8x0fQecOmR0SIUNkIsdTKX7u31dmMeljUz4WbITD8Fo+Eju4Smb8exdeK/4VRno3faPjf9fsKPKJY50GbP9Sxk+kCZpVk6AaTHRCFyNydt9+fz9hUJGFqBgL0f5vl7AY/yE4l72VfqHOb/UumSRIfZRI/isUvFqoHbSzDJeQkv7djXD8xlIzi/w84jAImhsrxTKPt28DChYE8Y12RxIvRr+Eo/dsYUCOJUTCoss3GybLktFpfV/HfG1yByGE8GDRUFzHiNfmBJE+OpDiHT7Z+oBJQ7YYn+OduLLHXcxZspnuKa20b5KHJdV6gnCjug+GKhW4KaHkU153amrJC2dbD1W/oDRe624+UmhBDfKgOJ41r1J31EtxrVhWygMXcSehSjnSnt5VVfOIxxc902PzTue6segvjJ4nj0s169pMWFcPVVFpEkw3kzM1+VSmjoBL72Bypo2OJzaFke5Z7j1aXspBG/wM5j60MSrdwJqGifZfvohxw7kkRECJwKRm0qtcln0XKFL/I5VqUXhLNeJVriA5v3P5aDDrWMEV765dvPyQc1mjR532kObWGoL203YH6yGc4LyvD0Pe0B0RscZMmLgwyMqlJgA9gLQP2OP2bdTiL0undLdnchF6KvSaDiyNHAhZqACI6gaZuYy5Lg0t9ryfNWhNwTXFavYi+FHxXNmwtvGqQ+FpNmhZLav2KAXJeXg283ce1XeMR3q5HxKPCSPavstRMpmI+fdSBvRYIkw35FbzKG4cpZQodOQm3N7sTRYxKWzOGAQRevsS7PzDewU2DUuYueyFXVaoWfVLTlrmCN3XC8NQ+wW37LEWgYBp4NpuZJ9Pw6TsdeGxUaTSCj2SMTs5VjruEyu1zN/+EYltCXdTgYlTH/yswjFGwB3bxtIc4cBwMfeeaAAAA=',
+            rating: 4.6,
+            reviews: 43
+        },
+        {
+            id: 5,
+            nom: 'Shaker 700ml',
+            prix: 12.99,
+            categorie: 'Équipements',
+            stock: 150,
+            badge: 'promo',
+            prixOld: 16.99,
+            image: 'https://tse3.mm.bing.net/th/id/OIP.Mf8ryJt_XkqbgZacA0QnOQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
+            rating: 4.4,
+            reviews: 78
+        },
+        {
+            id: 6,
+            nom: 'Créatine 500g',
+            prix: 34.99,
+            categorie: 'Suppléments',
+            stock: 60,
+            badge: null,
+            image: 'data:image/webp;base64,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',
+            rating: 4.9,
+            reviews: 201
+        },
+        {
+            id: 7,
+            nom: 'Casquette IRONFORGE',
+            prix: 18.99,
+            categorie: 'Vêtements',
+            stock: 80,
+            badge: 'nouveau',
+            image: 'https://tse4.mm.bing.net/th/id/OIP.ivnnBA7sI5R40gziy53nyQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
+            rating: 4.3,
+            reviews: 32
+        },
+        {
+            id: 8,
+            nom: 'Legging Sport',
+            prix: 39.99,
+            categorie: 'Vêtements',
+            stock: 120,
+            badge: null,
+            image: 'https://ae01.alicdn.com/kf/S831cafa03b624a54bbed5b6da6bd30edY/Yoga-Sport-Women-Fitness-Seamless-Workout-Leggings-Fashion-Push-Up-Leggings-Gym-Women-Pants.jpg',
+            rating: 4.6,
+            reviews: 67
+        },
+        {
+            id: 9,
+            nom: 'Bande de Résistance',
+            prix: 15.99,
+            categorie: 'Équipements',
+            stock: 200,
+            badge: null,
+            image: 'https://tse4.mm.bing.net/th/id/OIP.J--IA1e9LjQ0xi3qP3VtuAHaG5?rs=1&pid=ImgDetMain&o=7&rm=3',
+            rating: 4.5,
+            reviews: 94
+        },
+        {
+            id: 10,
+            nom: 'Foam Roller Pro',
+            prix: 27.99,
+            categorie: 'Équipements',
+            stock: 45,
+            badge: null,
+            image: 'https://tse3.mm.bing.net/th/id/OIP.px_LrqO8PXXXHxtmNtLmtwHaEJ?rs=1&pid=ImgDetMain&o=7&rm=3',
+            rating: 4.7,
+            reviews: 38
+        }
+    ];
+
+    // Afficher les produits
+    const renderProduits = (produits) => {
+        const grid = document.getElementById('produitsGrid');
+        grid.innerHTML = '';
+
+        if (produits.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;
+                    padding:60px;color:var(--gris)">
+                    <i class="fas fa-box-open"
+                        style="font-size:48px;margin-bottom:15px;
+                        display:block;opacity:0.3"></i>
+                    Aucun produit trouvé
+                </div>`;
+            return;
+        }
+
+        produits.forEach(p => {
+            const stockClass = p.stock > 20 ? '' :
+                p.stock > 0 ? 'low' : 'out';
+            const stockText = p.stock > 20 ?
+                `✓ En stock (${p.stock})` :
+                p.stock > 0 ?
+                `⚠ Stock limité (${p.stock})` :
+                '✗ Rupture de stock';
+
+            const badgeHtml = p.badge ? `
+                <div class="produit-badge badge-${p.badge}">
+                    ${p.badge === 'bestseller' ? '🔥 Bestseller' :
+                      p.badge === 'nouveau' ? '✨ Nouveau' : '🏷️ Promo'}
+                </div>` : '';
+
+            const prixOldHtml = p.prixOld ?
+                `<span class="produit-prix-old">${p.prixOld}$</span>` : '';
+
+            const stars = '★'.repeat(Math.floor(p.rating)) +
+                (p.rating % 1 >= 0.5 ? '½' : '') +
+                '☆'.repeat(5 - Math.ceil(p.rating));
+
+            grid.innerHTML += `
+                <div class="produit-card" data-categorie="${p.categorie}">
+                    <div class="produit-image">
+                        <img src="${p.image}" alt="${p.nom}"
+                            loading="lazy">
+                        ${badgeHtml}
+                        <button class="produit-wishlist">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="produit-info">
+                        <div class="produit-categorie">
+                            ${p.categorie}
+                        </div>
+                        <h4>${p.nom}</h4>
+                        <div class="produit-rating">
+                            <span class="stars">${stars}</span>
+                            <span class="rating-count">
+                                (${p.reviews})
+                            </span>
+                        </div>
+                        <div class="produit-prix-row">
+                            <div>
+                                <div class="produit-prix">
+                                    ${p.prix.toFixed(2)}$
+                                </div>
+                                ${prixOldHtml}
+                            </div>
+                            <span class="produit-stock ${stockClass}">
+                                ${stockText}
+                            </span>
+                        </div>
+                        <button class="btn-ajouter"
+                            onclick="addToCart(${p.id})"
+                            id="btn-${p.id}"
+                            ${p.stock === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-shopping-cart"></i>
+                            ${p.stock === 0 ?
+                                'Indisponible' : 'Ajouter au panier'}
+                        </button>
+                    </div>
+                </div>`;
+        });
+    };
+
+    // Filtrer par catégorie
+    const filterByCategorie = (cat, btn) => {
+        currentCategorie = cat;
+        document.querySelectorAll('.filtre-btn')
+            .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterProducts();
+    };
+
+    // Filtrer par recherche
+    const filterProducts = () => {
+        const search = document.getElementById('searchInput')
+            .value.toLowerCase();
+        let filtered = produitsStatiques;
+
+        if (currentCategorie !== 'tous') {
+            filtered = filtered.filter(p =>
+                p.categorie === currentCategorie);
+        }
+
+        if (search) {
+            filtered = filtered.filter(p =>
+                p.nom.toLowerCase().includes(search));
+        }
+
+        renderProduits(filtered);
+    };
+
+    // Ajouter au panier
+    const addToCart = (id) => {
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const produit = produitsStatiques.find(p => p.id === id);
+        const existing = cart.find(item => item.id === id);
+
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ ...produit, qty: 1 });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartUI();
+
+        const btn = document.getElementById(`btn-${id}`);
+        btn.classList.add('added');
+        btn.innerHTML = '<i class="fas fa-check"></i> Ajouté !';
+
+        setTimeout(() => {
+            btn.classList.remove('added');
+            btn.innerHTML =
+                '<i class="fas fa-shopping-cart"></i> Ajouter au panier';
+        }, 2000);
+    };
+
+    // Mettre à jour UI panier
+  const updateCartUI = () => {
+    const cartCountEl = document.getElementById('cartCount');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const cartItems = document.getElementById('cartItems');
+
+    if (!cartCountEl || !cartTotalEl || !cartItems) return;
+
+    const total = cart.reduce((sum, item) => sum + (item.prix * item.qty), 0);
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+
+    cartCountEl.textContent = count;
+    cartTotalEl.textContent = `${total.toFixed(2)}€`;
+
+    if (cart.length === 0) {
+        cartItems.innerHTML = `
+            <div class="cart-empty">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Votre panier est vide</p>
+            </div>`;
+        return;
+    }
+        cartItems.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <img src="${item.image}" alt="${item.nom}">
+                <div class="cart-item-info">
+                    <h4>${item.nom}</h4>
+                    <div class="cart-item-prix">
+                        ${(item.prix * item.qty).toFixed(2)}€
+                    </div>
+                    <div class="cart-item-qty">
+                        <button class="qty-btn"
+                            onclick="updateQty(${item.id}, -1)">
+                            −
+                        </button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn"
+                            onclick="updateQty(${item.id}, 1)">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <button class="cart-item-remove"
+                    onclick="removeFromCart(${item.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>`).join('');
+    };
+
+    // Modifier quantité
+    const updateQty = (id, delta) => {
+        const item = cart.find(i => i.id === id);
+        if (item) {
+            item.qty += delta;
+            if (item.qty <= 0) {
+                removeFromCart(id);
+                return;
+            }
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartUI();
+    };
+
+    // Supprimer du panier
+    const removeFromCart = (id) => {
+        cart = cart.filter(i => i.id !== id);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartUI();
+    };
+
+    // Toggle panier
+    const toggleCart = () => {
+        const sidebar = document.getElementById('cartSidebar');
+        const overlay = document.getElementById('cartOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    };
+
+
+// Charger config Stripe
+
+let stripeInitialized = false;
+
+const initStripe = async () => {
+    if (stripeInitialized) return;
+    const res = await fetch(`${API_URL}/api/paiement/config`);
+    const config = await res.json();
+    stripe = Stripe(config.publicKey);
+    stripeInitialized = true;
+};
+// Checkout avec Stripe
+
+const checkout = async () => {
+    if (cart.length === 0) {
+        alert('Votre panier est vide !');
+        return;
+    }
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // ✅ Initialiser Stripe avant tout
+    await initStripe();
+
+    const total = cart.reduce(
+        (sum, item) => sum + (item.prix * item.qty), 0);
+    const montantCentimes = Math.round(total * 100);
+
+    try {
+        const res = await fetch(
+            `${API_URL}/api/paiement/create-payment-intent`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                montant: montantCentimes,
+                description: `Commande IRONFORGE - ${cart.length} article(s)`
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.succes) {
+            afficherFormulairePaiement(
+                data.data.clientSecret,
+                data.data.intentId,
+                total
+            );
+        }
+    } catch (err) {
+        alert('Erreur lors de la création du paiement');
+    }
+};
+
+
+
+// Afficher formulaire Stripe
+const afficherFormulairePaiement = (clientSecret, intentId, total) => {
+    document.getElementById('cartSidebar').innerHTML = `
+        <div class="cart-header">
+            <h3>💳 Paiement sécurisé</h3>
+            <button class="cart-close" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div style="padding:25px">
+            <div style="margin-bottom:20px;padding:15px;
+                background:rgba(255,107,0,0.1);
+                border-radius:12px;border:1px solid rgba(255,107,0,0.2)">
+                <div style="font-size:13px;color:var(--gris)">
+                    Total à payer
+                </div>
+                <div style="font-family:'Bebas Neue',sans-serif;
+                    font-size:36px;color:var(--orange)">
+                    ${total.toFixed(2)}€
+                </div>
+            </div>
+            <div id="stripe-elements"></div>
+            <button id="btnPayer" onclick="payerCommande('${intentId}', ${total})"
+                style="width:100%;padding:16px;margin-top:20px;
+                background:linear-gradient(135deg,#FF6B00,#FF0000);
+                color:white;border:none;border-radius:12px;
+                font-size:16px;font-weight:700;cursor:pointer;
+                font-family:'Poppins',sans-serif">
+                <i class="fas fa-lock"></i> Payer ${total.toFixed(2)}€
+            </button>
+            <button onclick="toggleCart()"
+                style="width:100%;padding:12px;margin-top:10px;
+                background:transparent;border:1px solid rgba(255,255,255,0.1);
+                color:var(--gris);border-radius:12px;cursor:pointer;
+                font-family:'Poppins',sans-serif">
+                Retour au panier
+            </button>
+        </div>`;
+
+    // Créer éléments Stripe
+    elements = stripe.elements({ clientSecret });
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#stripe-elements');
+};
+
+// Payer commande
+const payerCommande = async (intentId, total) => {
+    const btn = document.getElementById('btnPayer');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+    btn.disabled = true;
+
+    try {
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: window.location.href
+            },
+            redirect: 'if_required'
+        });
+
+        if (error) {
+            alert('Erreur : ' + error.message);
+            btn.innerHTML = `<i class="fas fa-lock"></i> Payer ${total.toFixed(2)}€`;
+            btn.disabled = false;
+        } else {
+            // Confirmer côté backend
+            const res = await fetch(
+                `${API_URL}/api/paiement/confirmer-commande`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    paymentIntentId: intentId,
+                    total: total
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.succes) {
+                cart = [];
+                localStorage.removeItem('cart');
+                toggleCart();
+                alert('✅ Paiement réussi ! Commande confirmée !');
+            }
+        }
+    } catch (err) {
+        alert('Erreur paiement : ' + err.message);
+        btn.disabled = false;
+    }
+};
+
+
+    // Logout
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('cart');
+        window.location.href = 'login.html';
+    };
+
+    // Wishlist toggle
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.produit-wishlist')) {
+            const btn = e.target.closest('.produit-wishlist');
+            const icon = btn.querySelector('i');
+            icon.className = icon.className.includes('far') ?
+                'fas fa-heart' : 'far fa-heart';
+            icon.style.color = icon.className.includes('fas') ?
+                '#FF4444' : '';
+        }
+    });
+
+    // Init
+    allProduits = produitsStatiques;
+    renderProduits(allProduits);
+    updateCartUI();
+</script>
+</body>
+</html>
+

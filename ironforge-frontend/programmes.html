@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRONFORGE - Programmes</title>
+    <link rel="preconnect" href="https://tse1.mm.bing.net/th/id/OIP.gvya_uUuRkpFZAYngwF_4gHaE8?rs=1&pid=ImgDetMain&o=7&rm=3">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --orange: #FF6B00;
+            --gradient: linear-gradient(135deg, #FF6B00, #FF0000);
+            --noir: #0A0A0A;
+            --noir-card: #1A1A1A;
+            --noir-light: #252525;
+            --blanc: #FFFFFF;
+            --gris: #888888;
+            --vert: #00C853;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--noir);
+            color: var(--blanc);
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--noir-card);
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+        .sidebar-logo {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+        }
+        .logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 2px;
+            color: var(--blanc);
+        }
+        .logo-text em { color: var(--orange); font-style: normal; }
+        .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .nav-section { padding: 0 15px; margin-bottom: 25px; }
+        .nav-section-title {
+            font-size: 11px; font-weight: 600;
+            color: var(--gris); letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0 10px; margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 10px; border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none; font-size: 14px;
+            font-weight: 500; transition: all 0.3s;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--blanc); }
+        .nav-item.active {
+            background: rgba(255,107,0,0.15);
+            color: var(--orange);
+            border-left: 3px solid var(--orange);
+        }
+        .nav-item i { width: 20px; font-size: 16px; }
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-logout {
+            display: flex; align-items: center; gap: 10px;
+            color: rgba(255,255,255,0.4); font-size: 14px;
+            cursor: pointer; background: none; border: none;
+            font-family: 'Poppins', sans-serif; width: 100%;
+            transition: color 0.3s;
+        }
+        .btn-logout:hover { color: #FF4444; }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1; display: flex; flex-direction: column;
+        }
+        .page-header {
+            background: var(--noir-card);
+            padding: 25px 35px;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .page-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: 2px;
+        }
+        .page-header h1 span { color: var(--orange); }
+        .page-body { padding: 35px; flex: 1; }
+        .filtres {
+            display: flex; gap: 12px;
+            margin-bottom: 35px; flex-wrap: wrap;
+        }
+        .filtre-btn {
+            padding: 10px 22px;
+            background: var(--noir-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px; color: rgba(255,255,255,0.6);
+            font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .filtre-btn:hover,
+        .filtre-btn.active {
+            background: rgba(255,107,0,0.15);
+            border-color: var(--orange); color: var(--orange);
+        }
+        .programmes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+        .prog-card {
+            background: var(--noir-card);
+            border-radius: 20px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s;
+        }
+        .prog-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,107,0,0.3);
+            box-shadow: 0 20px 40px rgba(255,107,0,0.15);
+        }
+        .prog-image {
+            position: relative; height: 200px; overflow: hidden;
+        }
+        .prog-image img {
+            width: 100%; height: 100%;
+            object-fit: cover; transition: transform 0.5s;
+        }
+        .prog-card:hover .prog-image img { transform: scale(1.1); }
+        .prog-level {
+            position: absolute; bottom: 12px; left: 12px;
+            padding: 5px 14px; border-radius: 50px;
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+        }
+        .level-avance { background: rgba(255,0,0,0.8); }
+        .level-intermediaire { background: rgba(255,107,0,0.8); }
+        .level-debutant { background: rgba(0,200,83,0.8); }
+        .prog-body { padding: 20px; }
+        .prog-body h3 {
+            font-size: 18px; font-weight: 700; margin-bottom: 8px;
+        }
+        .prog-body p {
+            color: var(--gris); font-size: 13px;
+            line-height: 1.6; margin-bottom: 15px;
+        }
+        .prog-meta {
+            display: flex; gap: 15px; margin-bottom: 20px;
+        }
+        .prog-meta span {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--gris);
+        }
+        .prog-meta i { color: var(--orange); }
+        .prog-coach {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px; margin-bottom: 15px;
+        }
+        .coach-avatar-sm {
+            width: 35px; height: 35px;
+            background: var(--gradient); border-radius: 50%;
+            display: flex; align-items: center;
+            justify-content: center; font-weight: 700;
+            font-size: 13px;
+        }
+        .coach-name { font-size: 13px; font-weight: 600; }
+        .coach-spec { font-size: 11px; color: var(--orange); }
+        .prog-actions { display: flex; gap: 10px; }
+        .btn-commencer {
+            flex: 1; padding: 12px;
+            background: var(--gradient);
+            color: var(--blanc); border: none;
+            border-radius: 10px; font-size: 14px;
+            font-weight: 700; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+        }
+        .btn-commencer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255,107,0,0.4);
+        }
+        .btn-detail {
+            padding: 12px 15px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--blanc); border-radius: 10px;
+            cursor: pointer; font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-detail:hover {
+            border-color: var(--orange); color: var(--orange);
+        }
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 300; display: none;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--noir-card);
+            border-radius: 20px; padding: 35px;
+            width: 600px; max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .modal-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 25px;
+        }
+        .modal-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: 2px;
+        }
+        .modal-header h2 span { color: var(--orange); }
+        .modal-close {
+            background: none; border: none;
+            color: var(--gris); font-size: 22px;
+            cursor: pointer; transition: color 0.3s;
+        }
+        .modal-close:hover { color: var(--blanc); }
+        .exercice-list { margin-top: 20px; }
+        .exercice-item {
+            display: flex; align-items: center; gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px; margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .exercice-num {
+            width: 35px; height: 35px;
+            background: rgba(255,107,0,0.15);
+            border-radius: 50%;
+            display: flex; align-items: center;
+            justify-content: center;
+            color: var(--orange); font-weight: 700;
+            font-size: 14px; flex-shrink: 0;
+        }
+        .exercice-info h4 { font-size: 14px; font-weight: 600; }
+        .exercice-info span { font-size: 12px; color: var(--gris); }
+        /* SEANCES */
+        .seances-section { margin-top: 50px; }
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px; letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+        .section-title span { color: var(--orange); }
+        .seances-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .seance-card {
+            background: var(--noir-card);
+            border-radius: 16px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .seance-card:hover {
+            border-color: rgba(255,107,0,0.3);
+            transform: translateY(-5px);
+        }
+        .seance-date {
+            display: flex; align-items: center; gap: 15px;
+            margin-bottom: 15px;
+        }
+        .date-box {
+            width: 55px; height: 55px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .date-day {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px; line-height: 1;
+        }
+        .date-month {
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .seance-time { font-weight: 600; font-size: 15px; }
+        .seance-period { font-size: 12px; color: var(--gris); }
+        .seance-name {
+            font-size: 15px; font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .seance-coach {
+            font-size: 12px; color: var(--gris);
+            margin-bottom: 15px;
+        }
+        .seance-footer {
+            display: flex; align-items: center;
+            justify-content: space-between;
+        }
+        .seance-prix {
+            font-size: 20px; font-weight: 700;
+            color: var(--orange);
+        }
+        .btn-reserver {
+            padding: 8px 20px;
+            background: var(--gradient);
+            color: var(--blanc); border: none;
+            border-radius: 50px; font-size: 13px;
+            font-weight: 700; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        .btn-reserver:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,0,0.4);
+        }
+        .btn-reserver:disabled {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .toast {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--noir-card);
+            border: 1px solid var(--orange);
+            padding: 15px 25px; border-radius: 12px;
+            display: none; align-items: center; gap: 10px;
+            z-index: 500; animation: slideIn 0.3s ease;
+        }
+        .toast.show { display: flex; }
+        .toast.success { border-color: var(--vert); }
+        .toast i { color: var(--orange); font-size: 18px; }
+        .toast.success i { color: var(--vert); }
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @media (max-width: 1024px) {
+            .programmes-grid { grid-template-columns: repeat(2, 1fr); }
+            .seances-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .programmes-grid { grid-template-columns: 1fr; }
+            .seances-grid { grid-template-columns: 1fr; }
+            .page-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+        <span style="font-size:28px">🔥</span>
+        <span class="logo-text">IRON<em>FORGE</em></span>
+    </a>
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <a class="nav-item" href="dashboard.html">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-item" href="profil.html">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a class="nav-item" href="#">
+                <i class="fas fa-calendar-check"></i> Mes Séances
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Entraînement</div>
+            <a class="nav-item active" href="programmes.html">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a class="nav-item" href="mes-seances.html">
+                <i class="fas fa-fire"></i> Réserver Séance
+            </a>
+            <a class="nav-item" href="#">
+                <i class="fas fa-chart-line"></i> Ma Progression
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Commerce</div>
+            <a class="nav-item" href="boutique.html">
+                <i class="fas fa-store"></i> Boutique
+            </a>
+            <a class="nav-item" href="commandes.html">
+                <i class="fas fa-box"></i> Mes Commandes
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Se déconnecter
+        </button>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <header class="page-header">
+        <div>
+            <h1>NOS <span>PROGRAMMES</span></h1>
+            <p style="color:var(--gris);font-size:13px;margin-top:3px">
+                Choisissez votre programme d'entraînement
+            </p>
+        </div>
+    </header>
+
+    <div class="page-body">
+
+        <!-- Filtres -->
+        <div class="filtres">
+            <button class="filtre-btn active"
+                    onclick="filterProg('tous', this)">
+                Tous
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterProg('DEBUTANT', this)">
+                Débutant
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterProg('INTERMEDIAIRE', this)">
+                Intermédiaire
+            </button>
+            <button class="filtre-btn"
+                    onclick="filterProg('AVANCE', this)">
+                Avancé
+            </button>
+        </div>
+
+        <!-- Programmes Grid -->
+        <div class="programmes-grid" id="programmesGrid">
+            <div style="grid-column:1/-1;text-align:center;
+                    padding:60px;color:var(--gris)">
+                <i class="fas fa-spinner fa-spin"
+                   style="font-size:32px;margin-bottom:15px;
+                        display:block"></i>
+                Chargement des programmes...
+            </div>
+        </div>
+
+        <!-- Séances disponibles -->
+        <div class="seances-section">
+            <h2 class="section-title">
+                SÉANCES <span>DISPONIBLES</span>
+            </h2>
+            <div class="seances-grid" id="seancesGrid">
+                <div style="grid-column:1/-1;text-align:center;
+                        padding:40px;color:var(--gris)">
+                    Chargement des séances...
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL DÉTAIL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="modalTitle">
+                DÉTAIL <span>PROGRAMME</span>
+            </h2>
+            <button class="modal-close"
+                    onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Message</span>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8085';
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    let allProgrammes = [];
+    let currentFilter = 'tous';
+
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+    };
+
+    // Toast notification
+    const showToast = (msg, type = 'success') => {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        toast.className = `toast show ${type}`;
+        toastMsg.textContent = msg;
+        toast.querySelector('i').className =
+            type === 'success' ?
+            'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    // Images placeholder par niveau
+    const getImage = (niveau, id) => {
+        const images = {
+            'AVANCE': `https://tse4.mm.bing.net/th/id/OIP.YX6Xi8_dw2De8KjKdFgvSgHaEo?rs=1&pid=ImgDetMain&o=7&rm=3`,
+            'INTERMEDIAIRE': `https://myauthenticstore.com/wp-content/uploads/2025/11/look-sportif-gymshark-homme-maroc-entrainement-820x1024.webp`,
+            'DEBUTANT': `https://i.etsystatic.com/47714380/r/il/af33d0/5488049875/il_1080xN.5488049875_o6th.jpg`
+        };
+        return images[niveau] ||
+            `https://picsum.photos/400/200?random=${id}`;
+    };
+
+    // Niveau CSS class
+    const getLevelClass = (niveau) => {
+        if (niveau === 'AVANCE') return 'level-avance';
+        if (niveau === 'INTERMEDIAIRE') return 'level-intermediaire';
+        return 'level-debutant';
+    };
+
+    // Charger programmes
+    const loadProgrammes = async () => {
+        try {
+            const res = await fetch(
+                `${API_URL}/api/programmes/public`,
+                { headers });
+            const data = await res.json();
+
+            if (data.succes && data.data) {
+                allProgrammes = data.data;
+                renderProgrammes(allProgrammes);
+            }
+        } catch (err) {
+            document.getElementById('programmesGrid')
+                .innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;
+                    padding:60px;color:var(--gris)">
+                    <i class="fas fa-exclamation-circle"
+                        style="font-size:32px;margin-bottom:15px;
+                        display:block;color:var(--orange)"></i>
+                    Impossible de charger les programmes.
+                    Vérifiez que le serveur est démarré.
+                </div>`;
+        }
+    };
+
+    // Render programmes
+    const renderProgrammes = (programmes) => {
+        const grid = document.getElementById('programmesGrid');
+
+        if (programmes.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;
+                    padding:60px;color:var(--gris)">
+                    Aucun programme trouvé
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = programmes.map(p => {
+            const coachNom = p.coach?.utilisateur?.nom || 'N/A';
+            const coachPrenom = p.coach?.utilisateur?.prenom || '';
+            const coachSpec = p.coach?.specialite || 'Coach';
+            const initiales = coachNom !== 'N/A' ?
+                `${coachNom[0]}${coachPrenom[0] || ''}` : 'IF';
+
+            return `
+            <div class="prog-card">
+                <div class="prog-image">
+                    <img src="${getImage(p.niveau, p.id)}"
+                        alt="${p.nom}" loading="lazy">
+                    <div class="prog-level ${getLevelClass(p.niveau)}">
+                        ${p.niveau || 'DÉBUTANT'}
+                    </div>
+                </div>
+                <div class="prog-body">
+                    <h3>${p.nom}</h3>
+                    <p>${p.description || 'Programme d\'entraînement professionnel'}</p>
+                    <div class="prog-meta">
+                        <span>
+                            <i class="fas fa-clock"></i>
+                            ${p.dureeSemaines || '?'} semaines
+                        </span>
+                        <span>
+                            <i class="fas fa-calendar"></i>
+                            ${p.joursParSemaine || '?'} jours/sem
+                        </span>
+                    </div>
+                    <div class="prog-coach">
+                        <div class="coach-avatar-sm">
+                            ${initiales}
+                        </div>
+                        <div>
+                            <div class="coach-name">
+                                ${coachPrenom} ${coachNom}
+                            </div>
+                            <div class="coach-spec">${coachSpec}</div>
+                        </div>
+                    </div>
+                    <div class="prog-actions">
+                        <button class="btn-commencer"
+                            onclick="rejoindre(${p.id}, '${p.nom}')">
+                            <i class="fas fa-fire"></i>
+                            Commencer
+                        </button>
+                        <button class="btn-detail"
+                            onclick="voirDetail(${p.id})">
+                            <i class="fas fa-info"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    };
+
+    // Filtrer programmes
+    const filterProg = (niveau, btn) => {
+        currentFilter = niveau;
+        document.querySelectorAll('.filtre-btn')
+            .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filtered = niveau === 'tous' ?
+            allProgrammes :
+            allProgrammes.filter(p => p.niveau === niveau);
+        renderProgrammes(filtered);
+    };
+
+    // Rejoindre un programme
+    const rejoindre = async (id, nom) => {
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        try {
+            showToast(`✅ Programme "${nom}" ajouté à votre espace !`);
+        } catch (err) {
+            showToast('Erreur lors de l\'ajout', 'error');
+        }
+    };
+
+    // Voir détail programme
+    const voirDetail = async (id) => {
+        const prog = allProgrammes.find(p => p.id === id);
+        if (!prog) return;
+
+        const exercices = prog.exercices || [];
+        const modalContent = document.getElementById('modalContent');
+        document.getElementById('modalTitle').innerHTML =
+            `${prog.nom} <span>— DÉTAILS</span>`;
+
+        modalContent.innerHTML = `
+            <div style="margin-bottom:20px">
+                <img src="${getImage(prog.niveau, prog.id)}"
+                    style="width:100%;height:200px;
+                    object-fit:cover;border-radius:12px">
+            </div>
+            <p style="color:var(--gris);margin-bottom:20px;
+                line-height:1.7">
+                ${prog.description || 'Programme professionnel'}
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;
+                gap:15px;margin-bottom:25px">
+                <div style="background:rgba(255,107,0,0.1);
+                    padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-family:'Bebas Neue',sans-serif;
+                        font-size:28px;color:var(--orange)">
+                        ${prog.dureeSemaines || '?'}
+                    </div>
+                    <div style="font-size:12px;color:var(--gris)">
+                        Semaines
+                    </div>
+                </div>
+                <div style="background:rgba(255,107,0,0.1);
+                    padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-family:'Bebas Neue',sans-serif;
+                        font-size:28px;color:var(--orange)">
+                        ${prog.joursParSemaine || '?'}
+                    </div>
+                    <div style="font-size:12px;color:var(--gris)">
+                        Jours/sem
+                    </div>
+                </div>
+                <div style="background:rgba(255,107,0,0.1);
+                    padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-family:'Bebas Neue',sans-serif;
+                        font-size:28px;color:var(--orange)">
+                        ${prog.niveau || '?'}
+                    </div>
+                    <div style="font-size:12px;color:var(--gris)">
+                        Niveau
+                    </div>
+                </div>
+            </div>
+            <h3 style="margin-bottom:15px;font-size:16px">
+                Exercices
+                <span style="color:var(--orange)">
+                    (${exercices.length})
+                </span>
+            </h3>
+            <div class="exercice-list">
+                ${exercices.length > 0 ?
+                    exercices.map((ex, i) => `
+                    <div class="exercice-item">
+                        <div class="exercice-num">${i + 1}</div>
+                        <div class="exercice-info">
+                            <h4>${ex.nom}</h4>
+                            <span>
+                                ${ex.series || '?'} séries ×
+                                ${ex.repetitions || '?'} reps
+                                ${ex.dureeMinutes ?
+                                    `• ${ex.dureeMinutes} min` : ''}
+                            </span>
+                        </div>
+                    </div>`).join('') :
+                    `<p style="color:var(--gris);text-align:center;
+                        padding:20px">
+                        Aucun exercice défini
+                    </p>`
+                }
+            </div>
+
+          <button class="btn-commencer"
+                style="width:100%;margin-top:20px"
+                onclick="window.location.href='dashboard.html';closeModal()">
+                <i class="fas fa-fire"></i>
+                Commencer ce programme
+            </button>`;
+
+        document.getElementById('modalOverlay')
+            .classList.add('show');
+    };
+
+    const closeModal = () => {
+        document.getElementById('modalOverlay')
+            .classList.remove('show');
+    };
+
+
+
+ function commencerProgramme(){
+ alert("OK fonction appelee");
+ window.location.href = "dashboard.html";
+ }
+
+    // Charger séances
+    const loadSeances = async () => {
+        try {
+            const res = await fetch(
+                `${API_URL}/api/seances/disponibles`,
+                { headers });
+            const data = await res.json();
+
+            const grid = document.getElementById('seancesGrid');
+
+            if (data.succes && data.data &&
+                data.data.length > 0) {
+                grid.innerHTML = data.data.map(s => {
+                    const date = new Date(s.date);
+                    const day = date.getDate();
+                    const month = date.toLocaleDateString('fr-FR',
+                        { month: 'short' }).toUpperCase();
+                    const hour = parseInt(
+                        s.heureDebut?.split(':')[0] || 0);
+                    const period = hour < 12 ? 'Matin' :
+                        hour < 18 ? 'Après-midi' : 'Soir';
+
+                    const coachNom =
+                        s.coach?.utilisateur?.nom || 'Coach';
+                    const coachPrenom =
+                        s.coach?.utilisateur?.prenom || '';
+
+                    return `
+                    <div class="seance-card">
+                        <div class="seance-date">
+                            <div class="date-box">
+                                <span class="date-day">${day}</span>
+                                <span class="date-month">${month}</span>
+                            </div>
+                            <div>
+                                <div class="seance-time">
+                                    ${s.heureDebut || '?'} -
+                                    ${s.heureFin || '?'}
+                                </div>
+                                <div class="seance-period">
+                                    ${period}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="seance-name">
+                            Séance avec ${coachPrenom} ${coachNom}
+                        </div>
+                        <div class="seance-coach">
+                            <i class="fas fa-user-tie"></i>
+                            ${coachPrenom} ${coachNom}
+                        </div>
+                        <div class="seance-footer">
+                            <div class="seance-prix">
+                                ${s.prix || 0}€
+                            </div>
+                            <button class="btn-reserver"
+                                onclick="reserverSeance(${s.id})">
+                                Réserver
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } else {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;
+                        text-align:center;padding:40px;
+                        color:var(--gris)">
+                        <i class="fas fa-calendar-times"
+                            style="font-size:32px;
+                            margin-bottom:15px;display:block;
+                            opacity:0.3"></i>
+                        Aucune séance disponible
+                    </div>`;
+            }
+        } catch (err) {
+            console.error('Erreur séances:', err);
+        }
+    };
+
+    // Réserver une séance
+    const reserverSeance = async (id) => {
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        try {
+            const res = await fetch(
+                `${API_URL}/api/seances/reserver/${id}`, {
+                method: 'POST',
+                headers
+            });
+            const data = await res.json();
+
+            if (data.succes) {
+                showToast('✅ Séance réservée avec succès !');
+                loadSeances();
+            } else {
+                showToast(data.message || 'Erreur réservation',
+                    'error');
+            }
+        } catch (err) {
+            showToast('Erreur serveur', 'error');
+        }
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    };
+
+    // Init
+    loadProgrammes();
+    loadSeances();
+</script>
+</body>
+</html>
