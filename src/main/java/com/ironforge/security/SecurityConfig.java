@@ -94,8 +94,7 @@ public class SecurityConfig {
                                 "/api/membre/**",
                                 "/api/seances/**",
                                 "/api/commandes/**",
-                                "/api/messages/**",
-                                "/api/programmes/**"
+                                "/api/messages/**"
                         ).hasAnyRole("MEMBRE", "COACH", "ADMIN")
                         .anyRequest().authenticated()
                 )
