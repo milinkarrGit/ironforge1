@@ -89,11 +89,13 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/coach/**").hasAnyRole("COACH", "ADMIN")
+                        .requestMatchers("/api/admin/membres","/api/admin/coachs").hasAnyRole("COACH", "ADMIN")
                         .requestMatchers(
                                 "/api/membre/**",
                                 "/api/seances/**",
                                 "/api/commandes/**",
-                                "/api/messages/**"
+                                "/api/messages/**",
+                                "/api/programmes/**"
                         ).hasAnyRole("MEMBRE", "COACH", "ADMIN")
                         .anyRequest().authenticated()
                 )
