@@ -619,8 +619,11 @@
 
 
  setTimeout(() => {
-                    if (data.data.role === 'ADMIN') {
+                    const role = data.data.role
+                    if (role === 'ADMIN') {
                         window.location.href = 'admin.html';
+                        } else if (role === 'COACH'){
+                        window.location.href = 'coach.html';
                     } else {
                         window.location.href = 'dashboard.html';
                     }
@@ -640,16 +643,6 @@
     });
 
 
-setTimeout(() => {
-    if (data.data.role === 'ADMIN') {
-        window.location.href = 'admin.html';
-    } else if (data.data.role === 'COACH') {
-        window.location.href = 'coach.html';
-    } else {
-        window.location.href = 'dashboard.html';
-    }
-
-}, 1500);
 
 </script>
 </body>
