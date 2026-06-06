@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/produits/**").permitAll()
-                        .requestMatchers("/api/programmes/**").permitAll()
+                        .requestMatchers("/api/programmes/public").permitAll()
                         .requestMatchers("/api/localisation/**").permitAll()
                         .requestMatchers("/api/seances/disponibles").permitAll()
                         .requestMatchers("/api/paiement/config").permitAll()
