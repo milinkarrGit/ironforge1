@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/seances/**").hasAnyRole("MEMBRE", "COACH", "ADMIN")
                         .requestMatchers("/api/commandes/**").hasAnyRole("MEMBRE", "COACH", "ADMIN")
                         .requestMatchers("/api/messages/**").hasAnyRole("MEMBRE", "COACH", "ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
