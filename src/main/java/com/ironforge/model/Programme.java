@@ -1,12 +1,15 @@
 
 package com.ironforge.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "programmes")
@@ -47,6 +50,7 @@ public class Programme {
     @OneToMany(mappedBy = "programme", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("programme")
     private List<Exercice> exercices;
+
 
     @ManyToMany
     @JoinTable(

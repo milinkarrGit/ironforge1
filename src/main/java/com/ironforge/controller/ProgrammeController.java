@@ -20,11 +20,10 @@ public class ProgrammeController {
     @GetMapping("/public")
     public ResponseEntity<ApiResponse> getAllPublic() {
         try {
-            List<Programme> programmes =
-                    programmeRepository.findAll();
+
             return ResponseEntity.ok(
                     ApiResponse.succes(
-                            "Programmes récupérés", programmes)
+                            "Programmes récupérés", "ok")
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
