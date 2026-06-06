@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+import java.util.Map;
+import java.util.HashMap;
 @RestController
 @RequestMapping("/api/programmes")
 @RequiredArgsConstructor
@@ -20,10 +21,32 @@ public class ProgrammeController {
     @GetMapping("/public")
     public ResponseEntity<ApiResponse> getAllPublic() {
         try {
+            List<Programme> programmes =
+                    programmeRepository.findAll();
+
+            List<Map<String, Object>> result =
+                    programmes.stream().map(p -> {
+
+                        Map<String, Object> map = new HashMap<>();
+
+                        map.put("id", p.getId());
+                        map.put("nom", p.getNom());
+                        map.put("description", p.getDescription());
+                        map.put("niveau", p.getNiveau());
+                        map.put("dureeSemaines",
+                                p.getDureeSemaines());
+                        map.put("joursParSemaine",
+                                p.getJoursParSemaine());
+
+                        return map;
+
+                    }).toList();
 
             return ResponseEntity.ok(
                     ApiResponse.succes(
-                            "Programmes récupérés", "ok")
+                            "Programmes récupérés",
+                            result
+                    )
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
